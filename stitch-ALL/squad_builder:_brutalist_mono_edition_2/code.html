@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Memory Inspector: Paper Blueprint Edition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=VT323&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'paper-white': '#FDFDFD',
+                        'charcoal': '#2D2D2D',
+                        'blueprint-border': '#D1D5DB', // light gray
+                        'blueprint-accent': '#4B5563',
+                    },
+                    fontFamily: {
+                        mono: ["'VT323'", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px",
+                    }
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --charcoal: #2D2D2D;
+            --blueprint-border: #D1D5DB;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFDFD;
+            border-left: 1px solid var(--blueprint-border);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--blueprint-border);
+            border: 1px solid #FDFDFD;
+        }
+        .hatch-fill {
+            background-image: repeating-linear-gradient(-45deg, transparent, transparent 3px, currentColor 3px, currentColor 4px);
+        }
+        .dot-fill {
+            background-image: radial-gradient(currentColor 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        .sidebar-item.active {
+            border-left: 2px solid var(--charcoal);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .material-symbols-outlined {
+            font-size: 20px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-paper-white text-charcoal font-mono h-screen flex overflow-hidden selection:bg-charcoal selection:text-paper-white">
+<aside class="w-56 border-r border-blueprint-border flex flex-col shrink-0 bg-paper-white z-20">
+<div class="p-6 border-b border-blueprint-border">
+<h1 class="text-2xl font-bold tracking-wider flex items-center gap-2">
+<span class="font-bold text-gray-400">AF</span> AGENTFORGE
+            </h1>
+</div>
+<nav class="flex-1 overflow-y-auto py-4">
+<ul class="space-y-0.5">
+<li>
+<a class="sidebar-item flex items-center px-6 py-2.5 gap-3 text-lg transition-colors duration-200 opacity-60 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+                        SQUAD BUILDER
+                    </a>
+</li>
+<li>
+<a class="sidebar-item active flex items-center px-6 py-2.5 gap-3 text-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">storage</span>
+                        MEMORY INSPECTOR
+                    </a>
+</li>
+<li>
+<a class="sidebar-item flex items-center px-6 py-2.5 gap-3 text-lg transition-colors duration-200 opacity-60 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">timeline</span>
+                        TRAINING STUDIO
+                    </a>
+</li>
+<li>
+<a class="sidebar-item flex items-center px-6 py-2.5 gap-3 text-lg transition-colors duration-200 opacity-60 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">public</span>
+                        VECTOR GALAXY
+                    </a>
+</li>
+<li>
+<a class="sidebar-item flex items-center px-6 py-2.5 gap-3 text-lg transition-colors duration-200 opacity-60 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">feed</span>
+                        LIVE FEED
+                    </a>
+</li>
+<li>
+<a class="sidebar-item flex items-center px-6 py-2.5 gap-3 text-lg transition-colors duration-200 opacity-60 hover:opacity-100" href="#">
+<span class="material-symbols-outlined">hub</span>
+                        INTEGRATION HUB
+                    </a>
+</li>
+</ul>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden relative">
+<header class="p-8 pb-4 flex justify-between items-end border-b border-blueprint-border">
+<div>
+<h2 class="text-5xl font-bold uppercase tracking-tight mb-0 leading-none">Memory Inspector</h2>
+<p class="text-sm uppercase tracking-widest opacity-60">AgentDB Token Budget Visualizer</p>
+</div>
+<div class="flex flex-col items-end gap-1 w-1/3">
+<div class="flex justify-between w-full text-lg">
+<span>30,100</span>
+<span class="opacity-50">/ 62,000 tokens</span>
+</div>
+<div class="w-full h-5 border border-charcoal relative overflow-hidden">
+<div class="h-full w-[49%] bg-charcoal hatch-fill opacity-80"></div>
+<div class="absolute top-0 right-0 h-full w-[51%] bg-transparent hatch-fill text-gray-400 opacity-30"></div>
+</div>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10 mb-10 items-center">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined">water_drop</span>
+<h3 class="font-bold text-2xl uppercase leading-none">Hot</h3>
+</div>
+<p class="text-sm opacity-60 leading-tight">Active context, high-frequency access</p>
+<div class="flex justify-between text-lg mt-1">
+<span>7,400 <span class="opacity-50">/ 10,000</span></span>
+<span>74%</span>
+</div>
+<div class="w-full h-4 border border-charcoal relative">
+<div class="h-full w-[74%] bg-charcoal hatch-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[26%] hatch-fill opacity-20 text-gray-500"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined">wb_sunny</span>
+<h3 class="font-bold text-2xl uppercase leading-none">Warm</h3>
+</div>
+<p class="text-sm opacity-60 leading-tight">Recent patterns, moderate access</p>
+<div class="flex justify-between text-lg mt-1">
+<span>7,700 <span class="opacity-50">/ 16,000</span></span>
+<span>48%</span>
+</div>
+<div class="w-full h-4 border border-charcoal relative">
+<div class="h-full w-[48%] bg-charcoal dot-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[52%] hatch-fill opacity-20 text-gray-500"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined">ac_unit</span>
+<h3 class="font-bold text-2xl uppercase leading-none">Cold</h3>
+</div>
+<p class="text-sm opacity-60 leading-tight">Archived knowledge, low-frequency</p>
+<div class="flex justify-between text-lg mt-1">
+<span>15,000 <span class="opacity-50">/ 36,000</span></span>
+<span>42%</span>
+</div>
+<div class="w-full h-4 border border-charcoal relative">
+<div class="h-full w-[42%] bg-charcoal hatch-fill opacity-50"></div>
+<div class="absolute top-0 right-0 h-full w-[58%] hatch-fill opacity-20 text-gray-500"></div>
+</div>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Active Context</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">session-memory</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>2,400 <span class="opacity-50">/ 4,000</span></span>
+<span>60%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[60%] dot-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[40%] dot-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 2s ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Recent Patterns</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">pattern-cache</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>4,000 <span class="opacity-50">/ 8,000</span></span>
+<span>50%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[50%] hatch-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[50%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 3m ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Archived Knowledge</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">vector-index</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>8,000 <span class="opacity-50">/ 16,000</span></span>
+<span>50%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[50%] hatch-fill opacity-60"></div>
+<div class="absolute top-0 right-0 h-full w-[50%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 1h ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Current Goals</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">goal-stack</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>1,800 <span class="opacity-50">/ 2,000</span></span>
+<span>90%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[90%] dot-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[10%] dot-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 5s ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Tool History</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">tool-log</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>2,200 <span class="opacity-50">/ 4,000</span></span>
+<span>55%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[55%] hatch-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[45%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 8m ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Reasoning Archive</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">reasoning-bank</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>5,000 <span class="opacity-50">/ 12,000</span></span>
+<span>42%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[42%] hatch-fill opacity-60"></div>
+<div class="absolute top-0 right-0 h-full w-[58%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 3h ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Working Memory</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">scratch-pad</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>3,200 <span class="opacity-50">/ 4,000</span></span>
+<span>80%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[80%] dot-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[20%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 1s ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Conversation Summary</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">summary-chain</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>1,500 <span class="opacity-50">/ 4,000</span></span>
+<span>38%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[38%] hatch-fill"></div>
+<div class="absolute top-0 right-0 h-full w-[62%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 12m ago</p>
+</div>
+<div class="border border-blueprint-border p-4 relative group hover:border-charcoal transition-colors">
+<div class="flex justify-between items-start mb-3">
+<h4 class="font-bold text-lg uppercase leading-none">Training Snapshots</h4>
+<span class="material-symbols-outlined text-sm opacity-50 cursor-pointer hover:opacity-100">expand_more</span>
+</div>
+<div class="mb-4">
+<span class="text-xs border border-blueprint-border px-2 py-0.5 opacity-70">checkpoint-store</span>
+</div>
+<div class="flex justify-between text-sm mb-1">
+<span>2,000 <span class="opacity-50">/ 8,000</span></span>
+<span>25%</span>
+</div>
+<div class="w-full h-2.5 border border-blueprint-border mb-2 relative">
+<div class="h-full bg-charcoal w-[25%] hatch-fill opacity-60"></div>
+<div class="absolute top-0 right-0 h-full w-[75%] hatch-fill opacity-10 text-gray-500"></div>
+</div>
+<p class="text-xs opacity-60">last accessed 6h ago</p>
+</div>
+</div>
+<div class="pt-6 border-t border-blueprint-border pb-8">
+<div class="flex justify-between items-end mb-2">
+<h3 class="font-bold text-lg uppercase">Total Memory Allocation</h3>
+<span class="text-lg">49% utilized</span>
+</div>
+<div class="w-full h-5 border border-charcoal flex mb-3">
+<div class="h-full w-[20%] bg-charcoal hatch-fill border-r border-paper-white"></div>
+<div class="h-full w-[25%] bg-charcoal dot-fill border-r border-paper-white"></div>
+<div class="h-full w-[35%] bg-charcoal hatch-fill opacity-50 border-r border-paper-white"></div>
+<div class="h-full flex-1"></div>
+</div>
+<div class="flex gap-6 text-sm uppercase">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-charcoal hatch-fill"></div>
+<span>Hot 7,400</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-charcoal dot-fill"></div>
+<span>Warm 7,700</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-charcoal hatch-fill opacity-50"></div>
+<span>Cold 15,000</span>
+</div>
+</div>
+<div class="flex gap-4 mt-8">
+<button class="px-6 py-2 bg-charcoal text-paper-white font-bold uppercase text-lg border border-transparent hover:opacity-90 transition-opacity">
+                        Optimize Memory
+                    </button>
+<button class="px-6 py-2 bg-transparent text-charcoal font-bold uppercase text-lg border border-charcoal hover:bg-gray-100 transition-colors">
+                        Clear Cold Storage
+                    </button>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

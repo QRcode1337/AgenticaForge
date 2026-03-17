@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>System Logs: Brutalist Mono Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Fira+Code:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#0F172A", // Deep charcoal as requested
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "mono": ["Fira Code", "monospace"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "2px", // Sharp, brutalist default
+                        "none": "0px",
+                        "sm": "2px",
+                        "md": "4px",
+                    },
+                    backgroundImage: {
+                        'hatched': 'repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0F172A 10px, #0F172A 20px)',
+                        'hatched-warn': 'repeating-linear-gradient(45deg, #ca8a04, #ca8a04 2px, transparent 2px, transparent 6px)',
+                        'dots': 'radial-gradient(#334155 1px, transparent 1px)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for brutalist feel */
+        ::-webkit-scrollbar {
+            width: 12px;
+            background: #0F172A;
+            border-left: 1px solid #334155;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border: 2px solid #0F172A;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        
+        /* Utility for sharp borders */
+        .sharp-border {
+            border: 1px solid #334155;
+        }
+        
+        .dot-pattern-bg {
+            background-image: radial-gradient(#475569 1.5px, transparent 1.5px);
+            background-size: 8px 8px;
+        }
+
+        .hatched-pattern-bg {
+             background: repeating-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(255, 255, 255, 0.03) 2px,
+                transparent 2px,
+                transparent 8px
+            );
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-300 font-mono h-screen overflow-hidden flex flex-col">
+<!-- Header Section -->
+<header class="flex-none border-b border-border-dark bg-[#0F172A] z-10">
+<div class="px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<!-- Title -->
+<div class="flex items-center gap-3 select-none">
+<div class="w-4 h-4 border border-white flex items-center justify-center bg-white text-black">
+<span class="material-symbols-outlined text-[14px] font-bold">terminal</span>
+</div>
+<h1 class="text-white font-display text-lg font-bold tracking-tight uppercase">SYSTEM_LOGS_V1.0</h1>
+<span class="px-2 py-0.5 text-[10px] border border-green-500 text-green-500 font-bold tracking-wider">ONLINE</span>
+</div>
+<!-- Controls -->
+<div class="flex items-center gap-4 w-full md:w-auto">
+<!-- Search Input -->
+<div class="relative flex-1 md:w-96 group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-500 text-[18px]">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 bg-[#0F172A] border border-border-dark text-white placeholder-slate-600 focus:outline-none focus:border-white focus:ring-0 text-sm font-mono transition-colors" placeholder="FILTER_LOGS (REGEX SUPPORTED)" type="text"/>
+</div>
+<!-- Live Tick Toggle -->
+<button class="flex items-center gap-3 px-3 py-2 border border-border-dark hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="w-4 h-4 border border-slate-500 group-hover:border-white flex items-center justify-center p-0.5 transition-colors">
+<div class="w-full h-full bg-green-500 animate-pulse"></div>
+</div>
+<span class="text-xs font-bold text-white tracking-wider">LIVE_TICK</span>
+</button>
+<!-- Settings Icon -->
+<button class="w-10 h-10 border border-border-dark flex items-center justify-center hover:bg-white text-white hover:text-black transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+</div>
+<!-- Quick stats bar (Mobile/Tablet only, hidden on desktop) -->
+<div class="md:hidden flex border-t border-border-dark divide-x divide-border-dark overflow-x-auto">
+<div class="px-4 py-2 whitespace-nowrap">
+<span class="text-[10px] text-slate-500 block">UPTIME</span>
+<span class="text-sm text-white font-bold">48h 12m</span>
+</div>
+<div class="px-4 py-2 whitespace-nowrap">
+<span class="text-[10px] text-slate-500 block">ERRORS</span>
+<span class="text-sm text-white font-bold">42</span>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Main Log Feed -->
+<main class="flex-1 flex flex-col min-w-0 bg-[#0F172A] relative">
+<!-- Column Headers -->
+<div class="flex items-center border-b border-border-dark bg-[#0F172A] text-[11px] text-slate-500 font-bold tracking-widest px-4 py-2 select-none sticky top-0 z-10">
+<div class="w-[140px] shrink-0">TIMESTAMP</div>
+<div class="w-[80px] shrink-0 text-center">LEVEL</div>
+<div class="w-px h-3 bg-border-dark mx-4"></div>
+<div class="flex-1">MESSAGE_PAYLOAD</div>
+</div>
+<!-- Scroll Area -->
+<div class="flex-1 overflow-y-auto p-0 scroll-smooth" id="log-container">
+<!-- Log Entry: INFO -->
+<div class="group flex items-start px-4 py-2 hover:bg-white/5 border-b border-border-dark/30 transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-slate-400 font-mono pt-0.5">14:02:45.991</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-slate-600 text-slate-300 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">INFO</span>
+</div>
+<div class="w-px self-stretch bg-border-dark mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-slate-300 break-all font-mono">
+<span class="text-blue-400">Agent_04</span> connected successfully via secure handshake protocol v2.
+                    </div>
+</div>
+<!-- Log Entry: INFO -->
+<div class="group flex items-start px-4 py-2 hover:bg-white/5 border-b border-border-dark/30 transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-slate-400 font-mono pt-0.5">14:02:46.002</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-slate-600 text-slate-300 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">INFO</span>
+</div>
+<div class="w-px self-stretch bg-border-dark mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-slate-300 break-all font-mono">
+                         Sync started. Fetching batch <span class="text-yellow-500">#4921</span> from upstream.
+                    </div>
+</div>
+<!-- Log Entry: WARN (Hatched) -->
+<div class="group flex items-start px-4 py-2 bg-yellow-900/10 hatched-pattern-bg hover:bg-yellow-900/20 border-b border-border-dark/30 transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-yellow-500 font-mono font-bold pt-0.5">14:02:48.120</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-yellow-600 bg-yellow-900/20 text-yellow-500 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">WARN</span>
+</div>
+<div class="w-px self-stretch bg-yellow-900/50 mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-yellow-100 break-all font-mono">
+                        Latency spike detected on <span class="text-white font-bold">shard_02</span> (&gt; 350ms). Retrying packet...
+                    </div>
+</div>
+<!-- Log Entry: INFO -->
+<div class="group flex items-start px-4 py-2 hover:bg-white/5 border-b border-border-dark/30 transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-slate-400 font-mono pt-0.5">14:02:48.441</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-slate-600 text-slate-300 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">INFO</span>
+</div>
+<div class="w-px self-stretch bg-border-dark mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-slate-300 break-all font-mono">
+                        Packet retry successful. Resume normal operation.
+                    </div>
+</div>
+<!-- Log Entry: DEBUG -->
+<div class="group flex items-start px-4 py-2 hover:bg-white/5 border-b border-border-dark/30 transition-colors text-sm leading-relaxed opacity-60">
+<div class="w-[140px] shrink-0 text-slate-500 font-mono pt-0.5">14:02:49.001</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-slate-700 text-slate-500 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">DBUG</span>
+</div>
+<div class="w-px self-stretch bg-border-dark mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-slate-400 break-all font-mono">
+                        Memory GC trigger: freed 12MB. Heap size: 128MB.
+                    </div>
+</div>
+<!-- Log Entry: ERROR (Solid) -->
+<div class="group flex items-start px-4 py-3 bg-slate-200 border-b border-white transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-black font-mono font-bold pt-0.5">14:03:01.005</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block bg-red-600 text-white border border-black text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">ERRO</span>
+</div>
+<div class="w-px self-stretch bg-black mx-4 relative top-0 bottom-0 opacity-20"></div>
+<div class="flex-1 text-black break-all font-mono font-bold">
+                        CRITICAL FAILURE: Connection dropped on port 8080.
+                        <div class="mt-1 text-xs font-normal font-mono opacity-80 border-l-2 border-red-500 pl-2">
+                            at net.tcp.connect (native)<br/>
+                            at service.main.loop (line: 442)
+                        </div>
+</div>
+</div>
+<!-- Log Entry: INFO -->
+<div class="group flex items-start px-4 py-2 hover:bg-white/5 border-b border-border-dark/30 transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-slate-400 font-mono pt-0.5">14:03:02.110</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-slate-600 text-slate-300 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">INFO</span>
+</div>
+<div class="w-px self-stretch bg-border-dark mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-slate-300 break-all font-mono">
+                        Attempting auto-reconnect (1/3)...
+                    </div>
+</div>
+<!-- Log Entry: INFO -->
+<div class="group flex items-start px-4 py-2 hover:bg-white/5 border-b border-border-dark/30 transition-colors text-sm leading-relaxed">
+<div class="w-[140px] shrink-0 text-slate-400 font-mono pt-0.5">14:03:05.110</div>
+<div class="w-[80px] shrink-0 flex justify-center">
+<span class="inline-block border border-slate-600 text-slate-300 text-[10px] font-bold px-1.5 py-0.5 min-w-[50px] text-center">INFO</span>
+</div>
+<div class="w-px self-stretch bg-border-dark mx-4 relative top-0 bottom-0"></div>
+<div class="flex-1 text-slate-300 break-all font-mono">
+                        Attempting auto-reconnect (2/3)...
+                    </div>
+</div>
+<!-- Scroll anchor or loader at bottom -->
+<div class="p-4 flex items-center gap-2 opacity-50">
+<div class="w-2 h-2 bg-green-500 animate-pulse"></div>
+<span class="text-xs text-green-500 font-mono">AWAITING_INPUT_STREAM...</span>
+</div>
+</div>
+<!-- Floating Action for fast scroll to bottom -->
+<button class="absolute bottom-6 right-8 bg-[#0F172A] border border-white text-white p-2 hover:bg-white hover:text-black transition-colors shadow-none z-20">
+<span class="material-symbols-outlined text-[20px]">vertical_align_bottom</span>
+</button>
+</main>
+<!-- Right Sidebar (Desktop) -->
+<aside class="w-[280px] hidden lg:flex flex-col border-l border-border-dark bg-[#0F172A] z-20">
+<div class="p-4 border-b border-border-dark">
+<h2 class="text-white font-bold text-sm tracking-wider mb-1">LOG_STATS</h2>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest">REAL-TIME MONITOR</p>
+</div>
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-8">
+<!-- Status Block -->
+<div class="flex flex-col gap-2">
+<div class="text-[10px] text-slate-400 font-bold uppercase mb-1 flex justify-between">
+<span>SYSTEM_STATUS</span>
+<span class="text-green-500">OK</span>
+</div>
+<div class="h-24 w-full border border-border-dark relative p-2 flex items-end gap-1 dot-pattern-bg">
+<!-- Simulated Graph Bars -->
+<div class="w-1/6 bg-slate-600 h-[40%]"></div>
+<div class="w-1/6 bg-slate-600 h-[60%]"></div>
+<div class="w-1/6 bg-slate-600 h-[30%]"></div>
+<div class="w-1/6 bg-yellow-600 h-[80%]"></div>
+<div class="w-1/6 bg-slate-600 h-[50%]"></div>
+<div class="w-1/6 bg-slate-600 h-[45%]"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-600 font-mono">
+<span>-60s</span>
+<span>NOW</span>
+</div>
+</div>
+<!-- Counters -->
+<div class="grid grid-cols-2 gap-3">
+<div class="border border-border-dark p-3 flex flex-col justify-between h-24 relative overflow-hidden group hover:border-white transition-colors">
+<div class="absolute top-0 right-0 p-1">
+<span class="material-symbols-outlined text-[16px] text-slate-600 group-hover:text-white">error</span>
+</div>
+<span class="text-[10px] text-slate-500 font-bold">ERR_COUNT</span>
+<span class="text-2xl text-white font-mono font-bold">42</span>
+</div>
+<div class="border border-border-dark p-3 flex flex-col justify-between h-24 relative overflow-hidden group hover:border-white transition-colors">
+<div class="absolute top-0 right-0 p-1">
+<span class="material-symbols-outlined text-[16px] text-slate-600 group-hover:text-white">warning</span>
+</div>
+<span class="text-[10px] text-slate-500 font-bold">WARN_COUNT</span>
+<span class="text-2xl text-yellow-500 font-mono font-bold">12</span>
+</div>
+</div>
+<!-- Detailed Stats List -->
+<div class="flex flex-col gap-3">
+<div class="text-[10px] text-slate-400 font-bold uppercase border-b border-border-dark pb-2">
+                        AGENT_ACTIVITY
+                    </div>
+<div class="flex items-center justify-between text-xs font-mono">
+<span class="text-slate-400">active_agents</span>
+<span class="text-white">14</span>
+</div>
+<div class="flex items-center justify-between text-xs font-mono">
+<span class="text-slate-400">peak_load</span>
+<span class="text-white">89%</span>
+</div>
+<div class="flex items-center justify-between text-xs font-mono">
+<span class="text-slate-400">avg_latency</span>
+<span class="text-green-400">24ms</span>
+</div>
+</div>
+<!-- Bar chart specific visual -->
+<div class="flex flex-col gap-2">
+<div class="text-[10px] text-slate-400 font-bold uppercase">LOG_FREQ_24H</div>
+<div class="flex flex-col gap-1">
+<!-- Row 1 -->
+<div class="flex items-center gap-2 text-[10px] font-mono text-slate-500">
+<span class="w-8 text-right">INFO</span>
+<div class="flex-1 h-4 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzjwqheqwsTEBCYAIkCaAAW9EwVb4tZ8AAAAAElFTkSuQmCC')] opacity-50 relative">
+<div class="absolute inset-y-0 left-0 bg-slate-600 opacity-50 w-[80%]"></div>
+</div>
+<span class="text-white">84%</span>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center gap-2 text-[10px] font-mono text-slate-500">
+<span class="w-8 text-right">WARN</span>
+<div class="flex-1 h-4 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzjwqheqwsTEBCYAIkCaAAW9EwVb4tZ8AAAAAElFTkSuQmCC')] opacity-50 relative">
+<div class="absolute inset-y-0 left-0 bg-yellow-600 opacity-50 w-[12%]"></div>
+</div>
+<span class="text-yellow-500">12%</span>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center gap-2 text-[10px] font-mono text-slate-500">
+<span class="w-8 text-right">ERR</span>
+<div class="flex-1 h-4 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzjwqheqwsTEBCYAIkCaAAW9EwVb4tZ8AAAAAElFTkSuQmCC')] opacity-50 relative">
+<div class="absolute inset-y-0 left-0 bg-red-600 opacity-50 w-[4%]"></div>
+</div>
+<span class="text-red-500">04%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer of sidebar -->
+<div class="p-4 border-t border-border-dark text-[10px] text-slate-600 font-mono">
+<div class="flex justify-between mb-1">
+<span>MEMORY</span>
+<span>4.2GB / 16GB</span>
+</div>
+<div class="w-full h-1 bg-slate-800 border border-slate-700">
+<div class="h-full bg-slate-400 w-[26%]"></div>
+</div>
+<div class="mt-4 text-center opacity-50">
+                    v1.0.4-stable
+                </div>
+</div>
+</aside>
+</div>
+</body></html>

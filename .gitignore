@@ -1,0 +1,30 @@
+# General
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+.vercel/
+
+# Project specifics
+server/dist/
+worker/dist/
+agentforge/.next/
+agentica/dist/
+agentica/*/dist/
+agentica/node_modules/
+agentica/*/node_modules/
+
+# IDEs
+.vscode/
+.idea/
+.claude/
+.agent/
+.agents/

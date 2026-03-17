@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Squad Builder: Dutch Minimalist Edition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "active-green": "#22C55E",
+                        "background-light": "#f1f2f4",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .grid-canvas {
+            background-size: 32px 32px;
+            background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
+            background-color: #f1f2f4;
+        }
+        .dark .grid-canvas {
+            background-image: radial-gradient(circle, #334155 1px, transparent 1px);
+            background-color: #101622;
+        }
+        .neo-block {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .neo-block-sm {
+            box-shadow: 2px 2px 0px 0px #000000;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-item.active {
+            background-color: #ffffff;
+            color: #135bec;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-black dark:text-white transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Stark Primary Sidebar -->
+<aside class="w-24 flex-shrink-0 bg-primary flex flex-col items-center py-8 gap-10 border-r-2 border-black z-20">
+<div class="bg-white p-2 border-2 border-black neo-block-sm rotate-3">
+<span class="material-symbols-outlined text-primary font-bold text-3xl">grid_view</span>
+</div>
+<nav class="flex flex-col gap-6 flex-1">
+<button class="sidebar-item active p-3 border-2 border-black neo-block-sm transition-all">
+<span class="material-symbols-outlined text-2xl">dashboard</span>
+</button>
+<button class="sidebar-item p-3 text-white border-2 border-transparent hover:border-black hover:bg-white hover:text-primary transition-all">
+<span class="material-symbols-outlined text-2xl">groups</span>
+</button>
+<button class="sidebar-item p-3 text-white border-2 border-transparent hover:border-black hover:bg-white hover:text-primary transition-all">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+</button>
+<button class="sidebar-item p-3 text-white border-2 border-transparent hover:border-black hover:bg-white hover:text-primary transition-all">
+<span class="material-symbols-outlined text-2xl">account_tree</span>
+</button>
+</nav>
+<div class="flex flex-col gap-6">
+<button class="text-white hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 bg-white border-2 border-black rounded-sm overflow-hidden neo-block-sm">
+<img class="w-full h-full object-cover" data-alt="User profile avatar minimalist icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJqtg3zr_fX0iPwCjuM8pOpbnPwFC_WbE2D-M6ohkPcoYAmqzIyTTNQh4a_k97BdBjg3JrdUQna3rC6Ahy3Yc2k_Y8-SRkiiHQiNxtVtQzCwDTUtDhfo6j4ddFJ0ZpTsWpMV2HiW1YsXAATmUUpeZalHYSgv82ateJlXm04yUHxvrbtdmaBujh_QEptGemQbBElEJYMvVLCM_Md4vN3zaTq8K8sEgU1ckhPIneB7ju0_mBnt7MyQUbSF0f4kvYaoRrt-fxH_WSvu0"/>
+</div>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-1 flex flex-col relative overflow-hidden">
+<!-- Header/Toolbar -->
+<header class="h-20 bg-white dark:bg-slate-900 border-b-2 border-black flex items-center justify-between px-10 z-10">
+<div class="flex flex-col">
+<h1 class="text-2xl font-black uppercase tracking-tight leading-none">Squad Builder</h1>
+<p class="text-xs font-bold text-primary uppercase mt-1 tracking-widest">Variant 03 // Dutch Minimalist</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex border-2 border-black neo-block-sm h-10 overflow-hidden bg-white">
+<div class="px-3 flex items-center bg-gray-100 border-r-2 border-black">
+<span class="material-symbols-outlined text-sm">search</span>
+</div>
+<input class="border-none focus:ring-0 text-xs font-bold w-48 bg-white placeholder:text-gray-400" placeholder="FIND AGENT..." type="text"/>
+</div>
+<button class="bg-primary text-white font-bold text-xs px-6 py-2 border-2 border-black neo-block-sm uppercase hover:translate-y-[-2px] hover:translate-x-[-2px] transition-all active:translate-y-[0px] active:translate-x-[0px]">
+                        Add New Agent
+                    </button>
+<button class="bg-white text-black font-bold text-xs px-4 py-2 border-2 border-black neo-block-sm uppercase hover:bg-gray-50">
+                        Export
+                    </button>
+</div>
+</header>
+<!-- Node-Graph Canvas Area -->
+<div class="flex-1 relative grid-canvas overflow-auto p-16">
+<!-- Status Overlay (Fixed Position in Canvas) -->
+<div class="absolute top-8 left-8 bg-white p-4 border-2 border-black neo-block-sm z-10">
+<p class="text-[10px] font-black uppercase text-gray-400 mb-1">Grid Status</p>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-active-green border border-black"></div>
+<span class="text-xs font-bold uppercase">32px Snapping Active</span>
+</div>
+</div>
+<!-- SVG Connection Lines (Visual representation) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" style="min-width: 2000px; min-height: 2000px;">
+<path d="M 400 300 L 400 450 L 600 450" fill="none" stroke="black" stroke-width="2"></path>
+<path d="M 400 300 L 400 150 L 600 150" fill="none" stroke="black" stroke-width="2"></path>
+<path d="M 850 450 L 950 450 L 950 300 L 1050 300" fill="none" stroke="black" stroke-width="2"></path>
+<path d="M 850 150 L 950 150 L 950 300" fill="none" stroke="black" stroke-width="2"></path>
+</svg>
+<!-- Agent Nodes -->
+<!-- Root Node -->
+<div class="absolute" style="left: 224px; top: 256px;">
+<div class="w-48 bg-white border-2 border-black neo-block p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="w-8 h-8 bg-black"></div>
+<div class="bg-active-green px-2 py-0.5 border border-black text-[10px] font-black text-white">ACTIVE</div>
+</div>
+<div>
+<p class="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">Lead Agent</p>
+<h3 class="text-lg font-black uppercase tracking-tighter leading-none">ALPHA_01</h3>
+</div>
+<div class="flex gap-1">
+<div class="h-1 flex-1 bg-primary"></div>
+<div class="h-1 flex-1 bg-primary"></div>
+<div class="h-1 flex-1 bg-gray-200"></div>
+</div>
+</div>
+</div>
+<!-- Sub Node 1 -->
+<div class="absolute" style="left: 608px; top: 96px;">
+<div class="w-48 bg-white border-2 border-black neo-block p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="w-8 h-8 bg-primary"></div>
+<div class="bg-gray-200 px-2 py-0.5 border border-black text-[10px] font-black text-gray-500 uppercase">Idle</div>
+</div>
+<div>
+<p class="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">Tactical Ops</p>
+<h3 class="text-lg font-black uppercase tracking-tighter leading-none">BETA_02</h3>
+</div>
+</div>
+</div>
+<!-- Sub Node 2 -->
+<div class="absolute" style="left: 608px; top: 384px;">
+<div class="w-48 bg-white border-2 border-black neo-block p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="w-8 h-8 bg-active-green"></div>
+<div class="bg-active-green px-2 py-0.5 border border-black text-[10px] font-black text-white">ACTIVE</div>
+</div>
+<div>
+<p class="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">Intelligence</p>
+<h3 class="text-lg font-black uppercase tracking-tighter leading-none">GAMMA_03</h3>
+</div>
+</div>
+</div>
+<!-- End Node -->
+<div class="absolute" style="left: 1056px; top: 256px;">
+<div class="w-48 bg-white border-2 border-black neo-block p-4 flex flex-col gap-3 outline outline-4 outline-primary outline-offset-4">
+<div class="flex justify-between items-start">
+<div class="w-8 h-8 bg-black"></div>
+<div class="bg-gray-100 px-2 py-0.5 border border-black text-[10px] font-black text-black">IN_DRAFT</div>
+</div>
+<div>
+<p class="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">Final Sync</p>
+<h3 class="text-lg font-black uppercase tracking-tighter leading-none">DELTA_NODE</h3>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-sm font-bold">verified_user</span>
+<span class="text-[10px] font-black uppercase tracking-widest">Locked</span>
+</div>
+</div>
+</div>
+<!-- Drag Helper Nodes -->
+<div class="absolute opacity-50" style="left: 1280px; top: 512px;">
+<div class="w-16 h-16 border-2 border-dashed border-black flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-400">add</span>
+</div>
+</div>
+</div>
+<!-- Bottom Control Strip -->
+<footer class="h-12 bg-black text-white flex items-center justify-between px-6">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-black text-primary uppercase">X-Axis</span>
+<span class="text-xs font-mono">1056.00</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-black text-primary uppercase">Y-Axis</span>
+<span class="text-xs font-mono">256.00</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-black text-primary uppercase">Scale</span>
+<span class="text-xs font-mono">1.0x</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-1 hover:text-primary">
+<span class="material-symbols-outlined text-lg">zoom_in</span>
+</button>
+<button class="flex items-center gap-1 hover:text-primary">
+<span class="material-symbols-outlined text-lg">zoom_out</span>
+</button>
+<div class="h-4 w-[1px] bg-gray-700"></div>
+<button class="text-[10px] font-black uppercase tracking-widest bg-gray-800 px-2 py-1">Auto-Layout (L)</button>
+</div>
+</footer>
+<!-- Floating Property Panel -->
+<div class="absolute right-8 top-28 w-64 bg-white border-2 border-black neo-block z-20">
+<div class="p-3 border-b-2 border-black flex items-center justify-between bg-black text-white">
+<span class="text-xs font-black uppercase">Inspector</span>
+<span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</div>
+<div class="p-4 flex flex-col gap-4">
+<div>
+<label class="text-[10px] font-black uppercase text-gray-400">Agent Label</label>
+<input class="w-full text-sm font-bold border-2 border-black mt-1 uppercase" type="text" value="DELTA_NODE"/>
+</div>
+<div>
+<label class="text-[10px] font-black uppercase text-gray-400">Status Block</label>
+<select class="w-full text-sm font-bold border-2 border-black mt-1 uppercase">
+<option>Active</option>
+<option selected="">Draft</option>
+<option>Offline</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="text-[10px] font-black uppercase text-gray-400">Power</label>
+<div class="h-2 bg-gray-100 border border-black mt-1">
+<div class="h-full bg-primary w-[75%]"></div>
+</div>
+</div>
+<div>
+<label class="text-[10px] font-black uppercase text-gray-400">Integrity</label>
+<div class="h-2 bg-gray-100 border border-black mt-1">
+<div class="h-full bg-active-green w-[90%]"></div>
+</div>
+</div>
+</div>
+<button class="w-full bg-black text-white font-bold text-xs py-2 border-2 border-black hover:bg-gray-800 uppercase mt-2">
+                        Update Registry
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

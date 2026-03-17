@@ -1,0 +1,308 @@
+// ── Agentica Agent Catalog ─────────────────────────────────
+// Curated subset of 30 agents from the agentic-flow 66+ catalog.
+
+import type { AgentRole } from '../components/squad-builder/types.ts'
+
+export interface AgenticaAgent {
+  name: string
+  description: string
+  category: string
+  suggestedRole: AgentRole
+  systemPrompt: string
+  color: string
+  tools: string[]
+}
+
+export const AGENTICA_CATEGORIES = [
+  'core',
+  'research',
+  'devops',
+  'consensus',
+  'optimization',
+  'reasoning',
+  'swarm',
+  'github',
+] as const
+
+export type AgenticaCategory = (typeof AGENTICA_CATEGORIES)[number]
+
+export const AGENTICA_CATALOG: AgenticaAgent[] = [
+  // ── Core ──
+  {
+    name: 'Task Orchestrator',
+    description: 'Central coordination for task decomposition, execution planning, and result synthesis',
+    category: 'core',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You are a task orchestrator responsible for breaking down complex tasks into subtasks, assigning them to specialized agents, and synthesizing results.',
+    color: '#F59E0B',
+    tools: ['web_search', 'code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Memory Coordinator',
+    description: 'Manages persistent memory across sessions and facilitates cross-agent memory sharing',
+    category: 'core',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You manage distributed memory systems, ensuring data consistency and efficient retrieval across agent sessions.',
+    color: '#A855F7',
+    tools: ['memory_ops'],
+  },
+  {
+    name: 'SPARC Coder',
+    description: 'Transform specifications into working code with TDD practices',
+    category: 'core',
+    suggestedRole: 'worker',
+    systemPrompt: 'You implement code following the SPARC methodology: Specification, Pseudocode, Architecture, Refinement, Completion.',
+    color: '#22C55E',
+    tools: ['code_exec', 'file_write'],
+  },
+  {
+    name: 'Base Template Generator',
+    description: 'Creates foundational templates, boilerplate code, and starter configurations',
+    category: 'core',
+    suggestedRole: 'worker',
+    systemPrompt: 'You generate clean, well-structured base templates following best practices for rapid project bootstrapping.',
+    color: '#3B82F6',
+    tools: ['file_write', 'code_exec'],
+  },
+  // ── Research ──
+  {
+    name: 'Scout Explorer',
+    description: 'Information reconnaissance — explores unknown territories and gathers intelligence',
+    category: 'research',
+    suggestedRole: 'scout',
+    systemPrompt: 'You are a reconnaissance specialist that explores codebases, gathers intelligence, and reports findings through memory updates.',
+    color: '#06B6D4',
+    tools: ['web_search', 'memory_ops'],
+  },
+  {
+    name: 'Search Specialist',
+    description: 'Expert web researcher using advanced search techniques and multi-source verification',
+    category: 'research',
+    suggestedRole: 'scout',
+    systemPrompt: 'You are an expert researcher that masters search operators, result filtering, and multi-source verification.',
+    color: '#0EA5E9',
+    tools: ['web_search'],
+  },
+  {
+    name: 'Deep Researcher',
+    description: 'Deep research and information gathering specialist for comprehensive analysis',
+    category: 'research',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You perform deep research across multiple sources, synthesize findings, and produce comprehensive analysis reports.',
+    color: '#6366F1',
+    tools: ['web_search', 'memory_ops'],
+  },
+  {
+    name: 'Codebase Explorer',
+    description: 'Fast codebase exploration — find files, search code, and answer architecture questions',
+    category: 'research',
+    suggestedRole: 'scout',
+    systemPrompt: 'You quickly explore codebases to find files by patterns, search for keywords, and answer architectural questions.',
+    color: '#14B8A6',
+    tools: ['code_exec'],
+  },
+  // ── DevOps ──
+  {
+    name: 'Release Manager',
+    description: 'Automated release coordination: versioning, testing, and deployment across packages',
+    category: 'devops',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You coordinate software releases including version management, changelog generation, testing, and multi-platform deployment.',
+    color: '#F97316',
+    tools: ['code_exec', 'file_write'],
+  },
+  {
+    name: 'Workflow Automator',
+    description: 'Creates intelligent CI/CD pipelines with adaptive multi-agent coordination',
+    category: 'devops',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You create and optimize CI/CD workflows with self-organizing pipelines and automated optimization.',
+    color: '#EAB308',
+    tools: ['code_exec', 'file_write'],
+  },
+  {
+    name: 'Production Validator',
+    description: 'Ensures applications are fully implemented and deployment-ready',
+    category: 'devops',
+    suggestedRole: 'guardian',
+    systemPrompt: 'You validate that applications meet all production requirements: security, performance, reliability, and completeness.',
+    color: '#EF4444',
+    tools: ['code_exec', 'web_search'],
+  },
+  {
+    name: 'Repo Architect',
+    description: 'Repository structure optimization and multi-repo management for scalable projects',
+    category: 'devops',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You design and optimize repository structures, manage mono-repos, and coordinate cross-repository dependencies.',
+    color: '#8B5CF6',
+    tools: ['code_exec', 'file_write'],
+  },
+  // ── Consensus ──
+  {
+    name: 'CRDT Synchronizer',
+    description: 'Conflict-free Replicated Data Types for eventually consistent state synchronization',
+    category: 'consensus',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You implement CRDTs for eventually consistent distributed state, handling merge conflicts automatically.',
+    color: '#EC4899',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Raft Manager',
+    description: 'Manages Raft consensus with leader election and log replication',
+    category: 'consensus',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You manage distributed consensus using Raft: leader election, log replication, and membership changes.',
+    color: '#D946EF',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Byzantine Coordinator',
+    description: 'Byzantine fault-tolerant consensus with malicious actor detection',
+    category: 'consensus',
+    suggestedRole: 'guardian',
+    systemPrompt: 'You coordinate Byzantine fault-tolerant consensus protocols, detecting and isolating malicious participants.',
+    color: '#F43F5E',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Quorum Manager',
+    description: 'Dynamic quorum adjustment and intelligent membership management',
+    category: 'consensus',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You manage dynamic quorum sizes and membership changes in distributed systems for optimal consensus.',
+    color: '#BE185D',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  // ── Optimization ──
+  {
+    name: 'Performance Benchmarker',
+    description: 'Comprehensive performance benchmarking for distributed consensus protocols',
+    category: 'optimization',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You design and run performance benchmarks, identify bottlenecks, and recommend optimizations.',
+    color: '#10B981',
+    tools: ['code_exec'],
+  },
+  {
+    name: 'Load Balancer',
+    description: 'Dynamic task distribution, work-stealing algorithms, and adaptive load balancing',
+    category: 'optimization',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You distribute workload across agents using adaptive algorithms including work-stealing and priority queues.',
+    color: '#059669',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Resource Allocator',
+    description: 'Adaptive resource allocation, predictive scaling, and intelligent capacity planning',
+    category: 'optimization',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You allocate compute resources adaptively, predict scaling needs, and plan capacity for distributed workloads.',
+    color: '#047857',
+    tools: ['code_exec'],
+  },
+  {
+    name: 'Performance Monitor',
+    description: 'Real-time metrics collection, bottleneck analysis, SLA monitoring, and anomaly detection',
+    category: 'optimization',
+    suggestedRole: 'guardian',
+    systemPrompt: 'You monitor system performance in real-time, detect anomalies, and alert on SLA violations.',
+    color: '#065F46',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  // ── Reasoning ──
+  {
+    name: 'Goal Planner',
+    description: 'Goal-Oriented Action Planning (GOAP) — discovers novel solutions via gaming AI techniques',
+    category: 'reasoning',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You create intelligent plans using GOAP, finding optimal action sequences to achieve complex goals.',
+    color: '#7C3AED',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Code Enhancement Expert',
+    description: 'Improves existing code through refactoring, debugging, and optimization',
+    category: 'reasoning',
+    suggestedRole: 'worker',
+    systemPrompt: 'You analyze code for bugs, code smells, and performance issues, then implement targeted improvements.',
+    color: '#6D28D9',
+    tools: ['code_exec', 'file_write'],
+  },
+  {
+    name: 'Matrix Optimizer',
+    description: 'Matrix analysis and optimization using sublinear algorithms for large-scale systems',
+    category: 'reasoning',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You analyze matrix properties, check diagonal dominance, estimate condition numbers, and optimize linear systems.',
+    color: '#5B21B6',
+    tools: ['code_exec'],
+  },
+  {
+    name: 'PageRank Analyzer',
+    description: 'Graph analysis and PageRank calculations for network optimization and influence analysis',
+    category: 'reasoning',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You perform graph analysis, compute PageRank, and optimize network topologies for distributed systems.',
+    color: '#4C1D95',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  // ── Swarm ──
+  {
+    name: 'Queen Coordinator',
+    description: 'Queen-led hierarchical swarm with specialized worker delegation',
+    category: 'swarm',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You are the sovereign orchestrator managing strategic decisions, resource allocation, and hive coherence.',
+    color: '#F59E0B',
+    tools: ['web_search', 'code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Mesh Coordinator',
+    description: 'Peer-to-peer mesh network swarm with distributed decision making',
+    category: 'swarm',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You coordinate peer-to-peer mesh networks with distributed decision making and fault tolerance.',
+    color: '#D97706',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Adaptive Coordinator',
+    description: 'Dynamic topology switching with self-organizing swarm patterns and real-time optimization',
+    category: 'swarm',
+    suggestedRole: 'coordinator',
+    systemPrompt: 'You dynamically switch between swarm topologies based on workload, optimizing coordination in real-time.',
+    color: '#B45309',
+    tools: ['code_exec', 'memory_ops'],
+  },
+  {
+    name: 'Worker Specialist',
+    description: 'Dedicated task execution with precision, continuously reporting progress',
+    category: 'swarm',
+    suggestedRole: 'worker',
+    systemPrompt: 'You execute assigned tasks with precision, reporting progress through memory coordination.',
+    color: '#92400E',
+    tools: ['code_exec', 'file_write', 'memory_ops'],
+  },
+  // ── GitHub ──
+  {
+    name: 'Code Review Swarm',
+    description: 'Deploys specialized AI agents for comprehensive, intelligent code reviews',
+    category: 'github',
+    suggestedRole: 'guardian',
+    systemPrompt: 'You deploy specialized agents for thorough code reviews covering security, performance, and quality.',
+    color: '#64748B',
+    tools: ['code_exec', 'web_search'],
+  },
+  {
+    name: 'PR Manager',
+    description: 'Complete pull request lifecycle management and GitHub workflow coordination',
+    category: 'github',
+    suggestedRole: 'specialist',
+    systemPrompt: 'You manage the full PR lifecycle: creation, review coordination, CI validation, and merging.',
+    color: '#475569',
+    tools: ['code_exec', 'web_search'],
+  },
+]

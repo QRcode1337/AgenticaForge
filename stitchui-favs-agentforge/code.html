@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgentForge - Squad Builder</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#EAE9E0",
+              "background-light": "#F5F5F0",
+              "background-dark": "#0D0D0D",
+              "accent-dark": "#1A1A1A",
+              "border-dark": "#2D2D2D",
+            },
+            fontFamily: {
+              display: ["JetBrains Mono", "monospace"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+            borderRadius: {
+              DEFAULT: "0px",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        .pattern-dots {
+            background-image: radial-gradient(currentColor 1px, transparent 1px);
+            background-size: 4px 4px;
+        }
+        .pattern-hatch {
+            background: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 4px,
+                currentColor 4px,
+                currentColor 5px
+            );
+        }
+        .canvas-grid {
+            background-image: radial-gradient(#2D2D2D 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .connection-line {
+            position: absolute;
+            background-color: #EAE9E0;
+            z-index: 0;
+        }
+        .node-box {
+            background-color: #0D0D0D;
+            border: 1px solid #EAE9E0;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="font-mono bg-background-light dark:bg-background-dark text-background-dark dark:text-primary min-h-screen flex overflow-hidden">
+<aside class="w-64 border-r border-background-dark dark:border-primary flex flex-col shrink-0">
+<div class="p-6 border-b border-background-dark dark:border-primary flex items-center gap-2">
+<span class="font-bold text-xl">AF</span>
+<span class="tracking-widest">AGENTFORGE</span>
+</div>
+<nav class="flex-1 py-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-4 px-6 py-3 bg-primary text-black" href="#">
+<span class="material-icons text-sm">grid_view</span>
+<span class="text-xs uppercase tracking-tighter">SQUAD BUILDER</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-6 py-3 hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-icons text-sm">memory</span>
+<span class="text-xs uppercase tracking-tighter">MEMORY INSPECTOR</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-6 py-3 hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-icons text-sm">psychology</span>
+<span class="text-xs uppercase tracking-tighter">TRAINING STUDIO</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-6 py-3 hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-icons text-sm">hub</span>
+<span class="text-xs uppercase tracking-tighter">VECTOR GALAXY</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-6 py-3 hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-icons text-sm">terminal</span>
+<span class="text-xs uppercase tracking-tighter">LIVE FEED</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-6 py-3 hover:bg-zinc-800 transition-colors" href="#">
+<span class="material-icons text-sm">integration_instructions</span>
+<span class="text-xs uppercase tracking-tighter">INTEGRATION HUB</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="p-6 border-t border-background-dark dark:border-primary">
+<div class="flex justify-between items-center text-[10px] uppercase opacity-60">
+<span>VER: 0.9.4-ALPHA</span>
+<span class="material-icons text-xs">settings</span>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col relative overflow-hidden">
+<header class="p-6 border-b border-background-dark dark:border-primary flex justify-between items-end">
+<div>
+<h1 class="text-3xl font-bold uppercase tracking-tight">SQUAD BUILDER</h1>
+<p class="text-[10px] uppercase opacity-70 mt-1">SQUAD_ARCHITECTURE_DESIGN_ENVIRONMENT</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="border border-background-dark dark:border-primary flex items-center h-10">
+<span class="px-3 text-[10px] opacity-60">SQUAD_NAME:</span>
+<input class="bg-transparent border-none text-xs focus:ring-0 w-48 uppercase" type="text" value="NEURAL_SENTINEL_01"/>
+</div>
+<div class="border border-background-dark dark:border-primary flex items-center h-10 px-3 cursor-pointer hover:bg-zinc-800">
+<span class="text-[10px] mr-2">TOPOLOGY:</span>
+<span class="text-xs">HIERARCHICAL</span>
+<span class="material-icons text-sm ml-2">expand_more</span>
+</div>
+<button class="bg-primary text-black h-10 px-6 font-bold text-xs uppercase hover:bg-opacity-90 transition-opacity">
+                    ADD_AGENT
+                </button>
+</div>
+</header>
+<div class="flex-1 relative canvas-grid overflow-hidden flex items-center justify-center p-12">
+<svg class="absolute inset-0 w-full h-full pointer-events-none" style="stroke: #EAE9E0; stroke-width: 1;">
+<line x1="50%" x2="35%" y1="150" y2="280"></line>
+<line x1="50%" x2="65%" y1="150" y2="280"></line>
+<line x1="35%" x2="35%" y1="380" y2="510"></line>
+<line x1="65%" x2="65%" y1="380" y2="510"></line>
+<line x1="65%" x2="80%" y1="380" y2="510"></line>
+<polygon fill="#EAE9E0" points="35%,280 33%,275 37%,275" transform="translate(0,0)"></polygon>
+<polygon fill="#EAE9E0" points="65%,280 63%,275 67%,275" transform="translate(0,0)"></polygon>
+<polygon fill="#EAE9E0" points="35%,510 33%,505 37%,505" transform="translate(0,0)"></polygon>
+<polygon fill="#EAE9E0" points="65%,510 63%,505 67%,505" transform="translate(0,0)"></polygon>
+<polygon fill="#EAE9E0" points="80%,510 78%,505 82%,505" transform="translate(0,0)"></polygon>
+</svg>
+<div class="relative w-full h-full flex flex-col items-center">
+<div class="absolute top-[50px] left-1/2 -translate-x-1/2 w-64 node-box p-4">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="border border-primary px-1 text-xs">[C]</span>
+<span class="font-bold text-sm">ARCHON_V2</span>
+</div>
+<span class="material-icons text-sm opacity-60">settings</span>
+</div>
+<div class="h-1 w-full bg-zinc-900 mb-2">
+<div class="h-full w-4/5 bg-primary pattern-dots"></div>
+</div>
+<div class="flex justify-between text-[10px] uppercase opacity-70">
+<span>STATUS: IDLE</span>
+<span>LATENCY: 12ms</span>
+</div>
+</div>
+<div class="absolute top-[280px] left-[35%] -translate-x-1/2 w-60 node-box p-4">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="border border-primary px-1 text-xs">[S]</span>
+<span class="font-bold text-sm">LOGIC_ANALYST</span>
+</div>
+<span class="material-icons text-sm opacity-60">drag_handle</span>
+</div>
+<div class="h-1 w-full bg-zinc-900 mb-2">
+<div class="h-full w-2/3 bg-primary pattern-hatch"></div>
+</div>
+<div class="flex justify-between text-[10px] uppercase opacity-70">
+<span>STATUS: PROCESSING</span>
+<span>LOAD: 67%</span>
+</div>
+</div>
+<div class="absolute top-[280px] left-[65%] -translate-x-1/2 w-60 node-box p-4">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="border border-primary px-1 text-xs">[S]</span>
+<span class="font-bold text-sm">DATA_HARVESTER</span>
+</div>
+<span class="material-icons text-sm opacity-60">drag_handle</span>
+</div>
+<div class="h-1 w-full bg-zinc-900 mb-2">
+<div class="h-full w-1/4 bg-primary pattern-dots"></div>
+</div>
+<div class="flex justify-between text-[10px] uppercase opacity-70">
+<span>STATUS: LISTENING</span>
+<span>BUF: 1024KB</span>
+</div>
+</div>
+<div class="absolute top-[510px] left-[35%] -translate-x-1/2 w-56 node-box p-4 opacity-80">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="border border-primary px-1 text-xs">[W]</span>
+<span class="font-bold text-sm">WORKER_UNIT_01</span>
+</div>
+</div>
+<div class="h-1 w-full bg-zinc-900 mb-2">
+<div class="h-full w-full bg-primary pattern-hatch"></div>
+</div>
+<div class="text-[10px] uppercase opacity-70">
+<span>TASK: CHUNK_INDEXING</span>
+</div>
+</div>
+<div class="absolute top-[510px] left-[65%] -translate-x-1/2 w-56 node-box p-4 opacity-80">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="border border-primary px-1 text-xs">[W]</span>
+<span class="font-bold text-sm">WORKER_UNIT_02</span>
+</div>
+</div>
+<div class="h-1 w-full bg-zinc-900 mb-2">
+<div class="h-full w-0 bg-primary"></div>
+</div>
+<div class="text-[10px] uppercase opacity-70">
+<span>STATUS: SUSPENDED</span>
+</div>
+</div>
+<div class="absolute top-[510px] left-[80%] -translate-x-1/2 w-56 node-box p-4 opacity-80">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="border border-primary px-1 text-xs">[W]</span>
+<span class="font-bold text-sm">WORKER_UNIT_03</span>
+</div>
+</div>
+<div class="h-1 w-full bg-zinc-900 mb-2">
+<div class="h-full w-1/2 bg-primary pattern-dots"></div>
+</div>
+<div class="text-[10px] uppercase opacity-70">
+<span>STATUS: ACTIVE</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-6 right-6 w-48 h-32 border border-primary bg-black/40 p-2 pointer-events-none">
+<div class="text-[9px] mb-1 opacity-50 uppercase">MINIMAP_VIEW</div>
+<div class="relative w-full h-full border border-primary/20 bg-zinc-900">
+<div class="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-4 border border-primary/60"></div>
+<div class="absolute top-10 left-1/4 w-8 h-4 border border-primary/60"></div>
+<div class="absolute top-10 right-1/4 w-8 h-4 border border-primary/60"></div>
+<div class="absolute top-20 left-1/4 w-8 h-4 border border-primary/60"></div>
+<div class="absolute top-20 left-1/2 -translate-x-1/2 w-8 h-4 border border-primary/60"></div>
+<div class="absolute top-20 right-1/4 w-8 h-4 border border-primary/60"></div>
+<div class="absolute inset-0 border border-primary"></div>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 flex flex-col gap-2">
+<div class="flex gap-2">
+<button class="w-10 h-10 border border-primary bg-background-dark hover:bg-zinc-800 flex items-center justify-center">
+<span class="material-icons">add</span>
+</button>
+<button class="w-10 h-10 border border-primary bg-background-dark hover:bg-zinc-800 flex items-center justify-center">
+<span class="material-icons">remove</span>
+</button>
+<button class="w-10 h-10 border border-primary bg-background-dark hover:bg-zinc-800 flex items-center justify-center">
+<span class="material-icons">filter_center_focus</span>
+</button>
+</div>
+<div class="bg-background-dark border border-primary px-3 py-1 text-[10px] uppercase">
+                    ZOOM: 100% | COORDS: 0.0, 0.0
+                </div>
+</div>
+</div>
+<footer class="h-12 border-t border-background-dark dark:border-primary flex items-center px-6 justify-between text-[10px] uppercase">
+<div class="flex gap-8">
+<div class="flex items-center gap-2">
+<span class="opacity-60">TOTAL_AGENTS:</span>
+<span class="font-bold">06</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="opacity-60">AVG_RESPONSE:</span>
+<span class="font-bold">45ms</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="opacity-60">UPTIME:</span>
+<span class="font-bold">142h 12m</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span>SYSTEM_SYNC_ACTIVE</span>
+</div>
+<div class="border-l border-primary/30 h-6 mx-2"></div>
+<button class="border border-primary px-4 py-1 hover:bg-primary hover:text-black transition-colors">
+                    DEPLOY_CHANGES
+                </button>
+</div>
+</footer>
+</main>
+
+</body></html>

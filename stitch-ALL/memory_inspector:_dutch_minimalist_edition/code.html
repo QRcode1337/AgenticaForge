@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Memory Inspector: Dutch Minimalist Edition</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#06f95f",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#0f2316",
+                        "dutch-red": "#E63946",
+                        "dutch-blue": "#1D3557",
+                        "dutch-amber": "#FFB703",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderWidth: {
+                        '3': '3px',
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #f5f8f6;
+        }
+        .vertical-rule {
+            border-right: 2px solid #000;
+        }
+        .slab-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+        }
+        .tactile-button {
+            border: 2px solid #000;
+            transition: transform 0.1s ease;
+        }
+        .tactile-button:active {
+            transform: translate(2px, 2px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+<!-- Top Navigation -->
+<header class="border-b-2 border-black bg-white dark:bg-background-dark px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+<div class="flex items-center gap-6">
+<div class="bg-primary border-2 border-black p-1 flex items-center justify-center">
+<span class="material-symbols-outlined text-black font-bold">memory</span>
+</div>
+<h1 class="text-2xl font-bold tracking-tighter uppercase italic">Memory Inspector <span class="text-primary font-black">v3.1</span></h1>
+</div>
+<div class="flex items-center gap-8 font-medium uppercase text-sm tracking-widest">
+<a class="hover:underline decoration-primary decoration-4 underline-offset-4" href="#">Dashboard</a>
+<a class="hover:underline decoration-primary decoration-4 underline-offset-4" href="#">Agents</a>
+<a class="hover:underline decoration-primary decoration-4 underline-offset-4" href="#">Logs</a>
+<div class="h-8 w-8 bg-black rounded-full border-2 border-primary" data-alt="User profile avatar circle"></div>
+</div>
+</header>
+<!-- Main Content Grid -->
+<main class="flex-1 flex overflow-hidden">
+<!-- Left Column: Navigation & Stats -->
+<aside class="w-80 vertical-rule flex flex-col p-8 gap-10 bg-white dark:bg-background-dark/50">
+<div>
+<h2 class="text-4xl font-black mb-6 leading-none">SYSTEM<br/>STATE</h2>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-bold uppercase">
+<span>Global Tokens</span>
+<span>1.2M / 2.0M</span>
+</div>
+<div class="h-6 w-full border-2 border-black bg-slate-100 relative">
+<div class="h-full bg-dutch-blue" style="width: 60%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-bold uppercase">
+<span>Active Capacity</span>
+<span>85%</span>
+</div>
+<div class="h-6 w-full border-2 border-black bg-slate-100 relative">
+<div class="h-full bg-dutch-red" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<button class="flex items-center gap-3 p-3 bg-primary border-2 border-black text-black font-bold uppercase text-sm">
+<span class="material-symbols-outlined">dataset</span>
+                    Context Stream
+                </button>
+<button class="flex items-center gap-3 p-3 border-2 border-transparent hover:border-black font-bold uppercase text-sm">
+<span class="material-symbols-outlined">history</span>
+                    Memory Logs
+                </button>
+<button class="flex items-center gap-3 p-3 border-2 border-transparent hover:border-black font-bold uppercase text-sm">
+<span class="material-symbols-outlined">smart_toy</span>
+                    Agent Config
+                </button>
+<button class="flex items-center gap-3 p-3 border-2 border-transparent hover:border-black font-bold uppercase text-sm">
+<span class="material-symbols-outlined">analytics</span>
+                    Performance
+                </button>
+</nav>
+<div class="mt-auto border-t-2 border-black pt-6">
+<p class="text-[10px] font-bold uppercase text-slate-400">Environment</p>
+<p class="font-bold">PROD_NET_EINDHOVEN</p>
+</div>
+</aside>
+<!-- Center Column: Memory Stream -->
+<section class="flex-1 vertical-rule overflow-y-auto p-12 bg-background-light dark:bg-background-dark/30">
+<div class="max-w-2xl mx-auto">
+<div class="flex items-end justify-between mb-12">
+<h2 class="text-6xl font-black tracking-tighter leading-none">STREAM</h2>
+<span class="text-sm font-bold bg-black text-white px-2 py-1 uppercase">Live Updates</span>
+</div>
+<div class="space-y-8">
+<!-- Memory Card 1 -->
+<div class="slab-card p-6 flex flex-col gap-4 relative">
+<div class="absolute -left-3 top-6 h-6 w-6 bg-dutch-amber border-2 border-black"></div>
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Entry #8921-A</span>
+<span class="text-xs font-bold text-slate-500">2 mins ago</span>
+</div>
+<p class="text-lg leading-tight font-medium">User inquired about recursive loop architecture in neural clusters. Agent responded with topology diagram V4.</p>
+<div class="flex gap-2">
+<div class="h-2 w-24 bg-dutch-blue border border-black"></div>
+<div class="h-2 w-12 bg-slate-200 border border-black/10"></div>
+</div>
+</div>
+<!-- Memory Card 2 -->
+<div class="slab-card p-6 flex flex-col gap-4 relative">
+<div class="absolute -left-3 top-6 h-6 w-6 bg-primary border-2 border-black"></div>
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Entry #8919-B</span>
+<span class="text-xs font-bold text-slate-500">14 mins ago</span>
+</div>
+<p class="text-lg leading-tight font-medium">Cross-referencing historical data points from 2022 dataset for accuracy validation. Consistency score: 0.98.</p>
+<div class="flex gap-2">
+<div class="h-2 w-40 bg-dutch-red border border-black"></div>
+<div class="h-2 w-8 bg-slate-200 border border-black/10"></div>
+</div>
+</div>
+<!-- Memory Card 3 -->
+<div class="slab-card p-6 flex flex-col gap-4 relative">
+<div class="absolute -left-3 top-6 h-6 w-6 bg-dutch-blue border-2 border-black"></div>
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Entry #8915-C</span>
+<span class="text-xs font-bold text-slate-500">1 hr ago</span>
+</div>
+<p class="text-lg leading-tight font-medium">System purge initiated for deprecated metadata. 450KB freed in sector 7G.</p>
+<div class="flex gap-2">
+<div class="h-2 w-16 bg-dutch-amber border border-black"></div>
+<div class="h-2 w-32 bg-slate-200 border border-black/10"></div>
+</div>
+</div>
+<!-- Memory Card 4 -->
+<div class="slab-card p-6 flex flex-col gap-4 relative opacity-60">
+<div class="absolute -left-3 top-6 h-6 w-6 bg-slate-400 border-2 border-black"></div>
+<div class="flex justify-between items-start">
+<span class="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Entry #8912-D</span>
+<span class="text-xs font-bold text-slate-500">3 hrs ago</span>
+</div>
+<p class="text-lg leading-tight font-medium">Archiving session logs for 'Project De Stijl' design sprint...</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Inspector -->
+<aside class="w-96 flex flex-col bg-white dark:bg-background-dark p-8">
+<h2 class="text-4xl font-black mb-8 leading-none">INSPECT</h2>
+<div class="flex-1 space-y-8">
+<div class="border-4 border-black p-4">
+<p class="text-xs font-bold uppercase mb-2">Selected Metadata</p>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Vector ID</p>
+<p class="font-bold">v_90210_x</p>
+</div>
+<div>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Weight</p>
+<p class="font-bold">0.884</p>
+</div>
+<div>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Decay</p>
+<p class="font-bold">Linear</p>
+</div>
+<div>
+<p class="text-[10px] uppercase text-slate-400 font-bold">Owner</p>
+<p class="font-bold">Agent_04</p>
+</div>
+</div>
+</div>
+<div>
+<p class="text-xs font-bold uppercase mb-4">Semantic Associations</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-100 border-2 border-black text-xs font-bold uppercase">Architecture</span>
+<span class="px-3 py-1 bg-slate-100 border-2 border-black text-xs font-bold uppercase">Neural</span>
+<span class="px-3 py-1 bg-slate-100 border-2 border-black text-xs font-bold uppercase">Recursive</span>
+<span class="px-3 py-1 bg-slate-100 border-2 border-black text-xs font-bold uppercase">Logic</span>
+</div>
+</div>
+<div class="bg-dutch-blue text-white p-6 border-2 border-black">
+<span class="material-symbols-outlined mb-2">info</span>
+<p class="text-sm font-medium leading-snug">This memory segment is currently locked by a primary process and cannot be modified until the session terminates.</p>
+</div>
+</div>
+<div class="mt-auto flex flex-col gap-3 pt-8">
+<button class="tactile-button bg-primary text-black h-16 w-full flex items-center justify-center font-black uppercase text-lg tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    Commit Changes
+                </button>
+<button class="tactile-button bg-dutch-red text-white h-16 w-full flex items-center justify-center font-black uppercase text-lg tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    Wipe Memory
+                </button>
+</div>
+</aside>
+</main>
+<!-- Bottom Action Bar -->
+<footer class="h-24 border-t-2 border-black bg-white dark:bg-background-dark flex items-center px-8 justify-between z-50">
+<div class="flex gap-4">
+<button class="tactile-button bg-primary text-black px-8 py-3 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+<span class="material-symbols-outlined">sync</span>
+                Sync System
+            </button>
+<button class="tactile-button bg-white text-black px-8 py-3 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+<span class="material-symbols-outlined">download</span>
+                Export Data
+            </button>
+</div>
+<div class="flex items-center gap-12 h-full">
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-[10px] font-black uppercase text-slate-400">Memory Load</p>
+<p class="font-bold text-xl">74.2 GB</p>
+</div>
+<div class="w-16 h-8 border-2 border-black bg-slate-100">
+<div class="h-full bg-dutch-amber w-3/4"></div>
+</div>
+</div>
+<button class="tactile-button bg-black text-white px-10 h-16 flex items-center justify-center font-black uppercase text-lg tracking-tighter">
+                NEW AGENT +
+            </button>
+</div>
+</footer>
+</body></html>

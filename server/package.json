@@ -1,0 +1,35 @@
+{
+  "name": "agentforge-server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/api/server.ts",
+    "start": "tsx src/api/server.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "agentdb": "^3.0.0-alpha.10",
+    "agentic-flow": "file:../agentica",
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.44.0",
+    "express": "^5.2.1",
+    "openai": "^4.77.0",
+    "postgres": "^3.4.5",
+    "sql.js": "^1.14.1",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "drizzle-kit": "^0.30.0",
+    "typescript": "~5.9.3"
+  }
+}

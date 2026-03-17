@@ -1,0 +1,247 @@
+@import "tailwindcss";
+
+@theme {
+  /* Tactical Terminal - near-black base with functional color */
+  --color-forge-bg: #080a0f;
+  --color-forge-surface: #0f1117;
+  --color-forge-elevated: #1a1d27;
+  --color-forge-border: #252830;
+  --color-forge-border-active: #3a3f4b;
+
+  /* Functional accent colors - used sparingly for status */
+  --color-forge-cta: #22C55E;
+  --color-forge-accent: #3B82F6;
+  --color-forge-warning: #F59E0B;
+  --color-forge-error: #EF4444;
+  --color-forge-purple: #A855F7;
+
+  /* Text hierarchy */
+  --color-forge-text: #e2e4e9;
+  --color-forge-text-soft: #c0c3cc;
+  --color-forge-muted: #7a7f8d;
+  --color-forge-dim: #484c58;
+
+  /* Monospace-first typography */
+  --font-mono: 'Fira Code', 'SF Mono', 'Consolas', monospace;
+  --font-sans: 'Fira Sans', system-ui, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1a1d27 #0f1117;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0f1117;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #252830;
+  border-radius: 2px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4b;
+}
+
+/* Grid background pattern - Brutalist Mono inspired */
+.tactical-grid {
+  background-image:
+    linear-gradient(rgba(37, 40, 48, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 40, 48, 0.3) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Subtle scanline overlay */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out;
+}
+
+.animate-blink {
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+/* React Flow overrides - Tactical Terminal */
+.react-flow__background {
+  background-color: #080a0f !important;
+}
+
+.react-flow__minimap {
+  background-color: #0f1117 !important;
+  border: 1px solid #252830 !important;
+  border-radius: 2px !important;
+}
+
+.react-flow__controls {
+  background-color: #0f1117 !important;
+  border: 1px solid #252830 !important;
+  border-radius: 2px !important;
+}
+
+.react-flow__controls-button {
+  background-color: #0f1117 !important;
+  border-color: #252830 !important;
+  fill: #7a7f8d !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #1a1d27 !important;
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: #252830;
+  border-radius: 1px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #22C55E;
+  border-radius: 1px;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #22C55E;
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+}
+
+/* Select styling */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%237a7f8d' stroke-width='1.5'%3E%3Cpath d='M3 5l3 3 3-3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 28px;
+}
+
+/* ================================================================
+   HOMEPAGE UTILITIES (ported from site/src/app/globals.css)
+   ================================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #22C55E;
+  color: #080a0f;
+}
+
+/* Noise texture overlay */
+.noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Grid background - large 60px spacing */
+.grid-bg {
+  background-image:
+    linear-gradient(#252830 1px, transparent 1px),
+    linear-gradient(90deg, #252830 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center center;
+}
+
+/* Diagonal stripe pattern */
+.stripe-pattern {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.02) 10px,
+    rgba(255, 255, 255, 0.02) 20px
+  );
+}
+
+/* Text stroke utility */
+.text-stroke {
+  -webkit-text-stroke: 2px #e2e4e9;
+  color: transparent;
+}
+
+/* Clip-path diagonals */
+.clip-diagonal {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4vw), 0 100%);
+}
+
+.clip-diagonal-reverse {
+  clip-path: polygon(0 4vw, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-15px) rotate(1deg); }
+  66% { transform: translateY(8px) rotate(-0.5deg); }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
