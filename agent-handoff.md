@@ -1,44 +1,38 @@
-# Agent Handoff: AgentForge + Agentica Integration
+# Agent Handoff: AgenticaForge Integration
 
 ## Current Status
-Successfully integrated **AgentForge** (Visual Dashboard) with **Agentica** (`agentic-flow` backend engine). The system is now capable of visual orchestration that triggers real backend logic, uses a shared reasoning memory bank, and persists actual deliverables.
+
+Successfully integrated **AgentForge** (Visual Dashboard) with **Agentica** (`agentic-flow` engine) in a unified monorepo. The system is now a full-stack platform where the dashboard triggers real backend swarms, uses shared ReasoningBank memory, and manages real-time telemetry.
 
 ## Work Completed
 
-### 1. Backend Integration
-- **Package Linking:** Local `agentic-flow` package from `Tools/agentica` is linked into `AgentForge/worker` and `AgentForge/server`.
-- **ReasoningBank Bridge:** Installed `agentdb` and created API endpoints (`/api/memory/store`, `/api/memory/search`) that proxy frontend memory operations to the real Agentica ReasoningBank.
-- **Swarm Execution:** Created `/api/swarm/run` and `/api/swarm/stop` routes. These simulate the lifecycle of an Agentica swarm and handle the "Simulation to Reality" transition.
+### 1. Unified Structure
 
-### 2. Frontend Enhancements
-- **Shared Memory Hooks:** Updated `use-memory.ts` to use the local server proxy, allowing the visual "Memory Inspector" to read/write from the Agentica backend.
-- **SONA Telemetry:** Implemented a Server-Sent Events (SSE) listener in `TrainingStudio.tsx` that receives real-time metrics (reward, loss, pattern count) from the backend.
-- **Deliverable Notifications:** Added a global SSE event emitter. When a swarm "completes" on the backend, it persists a real `Deliverable` record and pops up a green success toast in the `SquadBuilder` UI.
+- **Monorepo:** Consolidated `AgentForge`, `Agentica`, `server`, and `worker` into the `AgenticaForge` root.
+- **Git Repo:** Re-initialized as a clean repository at the root.
 
-### 3. Environment & Infrastructure
-- **Port Mapping:** Frontend runs on **:3000**, Backend runs on **:3001**.
-- **CORS:** Updated backend to allow requests from the dashboard.
-- **Dependency Fixes:** Resolved Babel/React-Refresh issues by cleaning `node_modules`.
+### 2. Backend Integration
 
-## Project Context
-- **Conductor Tracks:** 
-  - `track-01-integration`: Linked packages (✅ Complete)
-  - `track-02-next-phase`: Shared memory & telemetry (✅ Complete)
-  - `track-03-deliverables`: Simulation to reality bridge (✅ Complete)
+- **Package Linking:** Local `agentic-flow` package from `./agentica` is linked into `./worker` and `./server`.
+- **ReasoningBank Bridge:** API endpoints (`/api/memory/store`, `/api/memory/search`) proxy frontend memory operations to the real Agentica ReasoningBank.
+- **Swarm Execution:** Real swarm logic is implemented in `/api/swarm/run`. The "Simulation to Reality" bridge is functional.
+
+### 3. Frontend & Telemetry
+
+- **Shared Memory:** `use-memory.ts` uses the local server proxy for persistent ReasoningBank access.
+- **SONA SSE:** `TrainingStudio.tsx` receives real-time metrics from the backend.
+- **Root Orchestration:** `package.json` at the root now manages the entire stack.
 
 ## Pending / Next Steps
-1. **Real Swarm Execution:** Replace the 5-second mock delay in `AgentForge/server/src/api/routes/swarm.ts` with real `Swarm` instantiation from `agentic-flow`.
-2. **SONA Metrics:** Hook the real SONA engine metrics from the Agentica worker into the `/api/telemetry` SSE stream.
-3. **Topology Mapping:** Finalize the logic that converts the ReactFlow `nodes` and `edges` array into an `Agentica` swarm configuration object.
-4. **Persistent Agent DB:** Transition the server's `AgentDB` from `:memory:` to a persistent file-based SQLite database for long-term learning.
+
+1. **Full Topology Mapping:** Finalize the dynamic mapping of ReactFlow graphs to complex Agentica configurations.
+2. **Persistent DB:** Move AgentDB from memory to a persistent SQLite/Postgres store.
+3. **Multi-Agent CLI:** Enhance the Command Center to allow direct multi-agent terminal control.
 
 ## How to Run
-```bash
-# 1. Start Backend (Port 3001)
-cd AgentForge/server
-PORT=3001 npm run dev
 
-# 2. Start Frontend (Port 3000)
-cd AgentForge
-npm run dev
+```bash
+# Start everything (Frontend @ 3000, Backend @ 3001, Worker)
+npm run dev:all
 ```
+
