@@ -1,113 +1,89 @@
-# AgentForge
+# 🚀 AgenticaForge: The Full-Stack Agentic OS
 
-An in-browser AI agent orchestration dashboard with a real working memory engine. Build, simulate, and inspect multi-agent swarms — no backend required.
+**AgenticaForge** is a production-grade AI agent orchestration platform that bridges visual intuition with professional-grade backend logic. It integrates the **AgentForge Visual Dashboard** with the **Agentica (`agentic-flow`) Engine**, powered by a high-performance Node.js service architecture.
 
-![AgentForge](screenshots/homepage.png)
+![AgenticaForge Interface](screenshots/homepage.png)
 
-## What It Does
+## 🏗️ System Architecture
 
-AgentForge is a browser-based platform for designing and testing AI agent systems. Everything runs client-side: the memory engine, vector search, swarm simulation, and service integrations. No backend required.
+AgenticaForge is built on a distributed, event-driven architecture designed for high-concurrency agentic swarms.
 
-**The memory engine is real.** It implements TF-IDF vectorization, HNSW approximate nearest-neighbor search, temporal decay scoring, and pattern learning — all in pure TypeScript with IndexedDB persistence. Store a memory, search for it semantically, and watch it decay over time.
+*   **Frontend (AgentForge)**: A React 19 visual dashboard for designing agent topologies, inspecting memory tiers (Hot/Warm/Cold), and monitoring real-time telemetry from the SONA training engine.
+*   **Backend API (Server)**: An Express service that manages the persistence layer (Postgres/Drizzle), exposes agent controllers, and handles the "Simulation to Reality" bridge.
+*   **Background Worker**: A dedicated task processor that executes LLM calls, handles long-running agentic loops, and generates vector embeddings for the ReasoningBank.
+*   **Core Engine (Agentica)**: The `agentic-flow` toolkit—a production-ready library featuring 66 specialized agents, 213 MCP tools, and quantum-resistant version control.
 
-**The swarm simulator is real.** 15 agents across 4 phases (discovery, analysis, synthesis, optimization) execute against the memory engine, storing and searching entries as they work. Watch them activate, complete tasks, and advance through phases in real time.
+## ✨ Core Features
 
-## Dashboard Panels
+### 🧩 Visual Swarm Orchestration
+Design complex multi-agent systems using a visual graph editor (React Flow). Transition seamlessly from **Mock Simulations** in the browser to **Real Swarm Execution** on the backend with a single click.
 
-| Panel | Purpose |
-|---|---|
-| **Squad Builder** | Visual graph editor (React Flow) for agent topology. Load a 15-agent V3 swarm template and run the simulation — nodes update live as agents change status. |
-| **Memory Inspector** | Three-tier memory viewer (hot/warm/cold) with real-time tier breakdown from the engine. Entries promote and demote based on access patterns and temporal decay. |
-| **Training Studio** | Training metrics visualization with Recharts. Tracks loss curves, accuracy, and training progression. |
-| **Vector Galaxy** | 3D vector space visualization (Three.js). Projects memory entry vectors into a navigable 3D point cloud. |
-| **Live Feed** | Real-time event stream from the engine event bus. Displays store, search, swarm, and integration events as they happen. Toggle mock events on/off. |
-| **Integration Hub** | Service management for 8 adapters (Ollama, HuggingFace, Claude-Flow, OpenClaw, AgentDB, Anthropic, OpenAI, Custom REST). Connect, configure, and monitor health. Includes a TEST DATA workbench for storing/searching/seeding memory entries. |
-| **Command Center** | Interactive terminal with 16 registered actions for memory operations, swarm control, database management, and utilities. |
+### 🧠 ReasoningBank (Three-Tier Memory)
+A sophisticated memory management system inspired by neurological models:
+*   **Hot Memory**: Real-time context, rapid access, high decay.
+*   **Warm Memory**: Recent patterns and frequently accessed clusters.
+*   **Cold Memory**: Long-term persistent knowledge, indexed via HNSW for semantic retrieval.
 
-## Memory Engine Architecture
+### 🌐 Multi-Provider Intelligence
+Native support for **OpenAI** (O1/GPT-4o), **Anthropic** (Claude 3.5/Sonnet), **HuggingFace**, and **Ollama**. The `ModelRouter` automatically handles fallback, load balancing, and provider-specific optimizations.
 
+### 📊 SONA Neural Telemetry
+Monitor the health and "learning" of your agents in real-time. High-resolution charts track reward curves, pattern density, and loss metrics as agents refine their strategies.
+
+---
+
+## 🚀 Quick Start
+
+AgenticaForge is a monorepo that manages its own dependencies and service lifecycle.
+
+### 1. Clone & Setup
+```bash
+git clone https://github.com/QRcode1337/AgenticaForge.git
+cd AgenticaForge
+npm install
 ```
-Content → TF-IDF Vectorizer → Sparse Vector → HNSW Index
-                                                  ↓
-Search Query → TF-IDF → Cosine Similarity ← HNSW Neighbors
-                              ↓
-                    Weighted Score = 0.5×similarity + 0.3×temporalDecay + 0.2×patternBoost
-                              ↓
-                       Ranked Results
+
+### 2. Configure Environment
+Update the `.env` files in both the `server/` and `worker/` directories with your API keys:
+```text
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+SUPABASE_URL=...
+DATABASE_URL=...
 ```
 
-- **TF-IDF Vector Store** — Term frequency-inverse document frequency with cosine similarity. No external ML models.
-- **HNSW Index** — Hierarchical Navigable Small World graph for approximate nearest-neighbor search. Configurable layers, beam width, and connection limits.
-- **Temporal Decay** — Entries decay based on configurable half-lives per tier. Hot entries decay in minutes, cold entries in hours. Tier promotion/demotion happens automatically.
-- **Pattern Tracker** — Repeated search patterns boost matching entries. Co-occurrence tracking identifies related memories.
-- **IndexedDB Persistence** — All state persists across page reloads via debounced writes to IndexedDB.
+### 3. Launch the Stack
+Start the development server, background worker, and frontend dashboard concurrently:
+```bash
+npm run dev:all
+```
 
-## Swarm Simulation
+*   **Dashboard**: `http://localhost:3000`
+*   **API Server**: `http://localhost:3001`
+*   **Worker**: Running in background via `tsx`
 
-The swarm simulator runs 15 agents through 4 phases:
+---
 
-| Phase | Agents | What They Do |
-|---|---|---|
-| **Discovery** | 4 scouts | Store new observations and patterns into memory |
-| **Analysis** | 4 specialists | Search memory for patterns and correlations |
-| **Synthesis** | 4 workers | Combine findings and store synthesized knowledge |
-| **Optimization** | 2 guardians + 1 coordinator | Validate, optimize, and coordinate final output |
+## 🛠️ Tech Stack
 
-Each agent operates on the real memory engine — scouts `store()` entries, specialists `search()` for patterns. Events propagate through the event bus to the Live Feed and Memory Inspector in real time.
+*   **Frontend**: React 19, Vite 7, Tailwind 4, React Flow, Three.js, Recharts.
+*   **Backend**: Node.js (v25+), Express, Drizzle ORM, Postgres.
+*   **Engine**: Agentica (`agentic-flow`), AgentDB, SONA Neural Layer.
+*   **Runtime**: `tsx` (TypeScript Execution Engine), Concurrently.
 
-## Tech Stack
-
-- **React 19** + **TypeScript 5.9** — `verbatimModuleSyntax`, `erasableSyntaxOnly`
-- **Vite 7** — Dev server with proxy routes for service adapters
-- **Tailwind 4** — "Tactical Terminal" dark brutalist mono theme
-- **React Flow** — Agent topology graph editor
-- **Three.js** (via React Three Fiber) — 3D vector visualization
-- **Recharts** — Training metrics charts
-- **Framer Motion** — Animations
-- **IndexedDB** — Client-side persistence (no backend)
-
-## Getting Started
+## 📁 Project Structure
 
 ```bash
-git clone https://github.com/QRcode1337/AgentForge.git
-cd AgentForge
-npm install
-npm run dev
+AgenticaForge/
+├── agentforge/      # Next.js / React Visual Interface
+├── agentica/        # Core Agentic Engine (agentic-flow SDK)
+├── server/          # Express API Gateway & Shared DB Layer
+├── worker/          # Background LLM Executor & Embedding Service
+├── conductor/       # Orchestration plans and integration logic
+├── docs/            # Architecture & Getting Started guides
+└── package.json     # Root dev:all script and monorepo config
 ```
 
-Open `http://localhost:3001/#/dashboard` to enter the dashboard.
+## 📜 License
 
-### Service Integrations
-
-The adapters probe real services through Vite dev server proxies. To connect:
-
-- **Ollama** — Run Ollama locally on port 11434
-- **Anthropic / OpenAI** — Configure API keys via the CONFIGURE modal on each card
-- **HuggingFace** — Works without auth for public model metadata
-- **AgentDB** — Always connected (uses IndexedDB)
-- **Custom REST** — Point at any HTTP endpoint
-
-## Project Structure
-
-```
-src/
-├── engine/              # Memory engine core
-│   ├── memory-engine.ts # CRUD + search orchestration
-│   ├── vector-store.ts  # TF-IDF vectorizer
-│   ├── hnsw-index.ts    # HNSW approximate NN
-│   ├── temporal-decay.ts# Tier decay scoring
-│   ├── pattern-tracker.ts# Pattern learning
-│   ├── event-bus.ts     # Pub/sub event system
-│   ├── persistence.ts   # IndexedDB state manager
-│   ├── swarm-simulator.ts# 15-agent 4-phase sim
-│   ├── seed-data.ts     # 25 seed entries
-│   └── adapters/        # Service probe adapters
-├── components/          # 7 dashboard panels
-├── hooks/               # React hooks (useMemory, useSwarm, useIntegrations)
-├── pages/               # Home, Docs, Dashboard
-└── types/               # Shared TypeScript types
-```
-
-## License
-
-MIT
+MIT © [QRcode1337](https://github.com/QRcode1337)
