@@ -1,0 +1,19 @@
+{
+  "ignorePatterns": "node_modules\ndist\nbuild\ncoverage\npackage-lock.json\npnpm-lock.yaml\nyarn.lock\nCargo.lock\n*.min.js\n*.map",
+  "customContext": {
+    "files": [
+      {
+        "scope": [
+          "AgentForge/**/*.{ts,tsx,js,jsx,py}",
+          "agentica/src/**/*.{ts,tsx,js,jsx,rs}",
+          "agentica/packages/**/*.{ts,tsx,js,jsx}",
+          "agentica/crates/**/*.rs",
+          "agentica/scripts/**/*.{ts,tsx,js,jsx,py}",
+          "conductor/**/*.{ts,tsx,js,jsx,py}"
+        ],
+        "path": "CLAUDE.md",
+        "description": "Project-specific coding conventions and review context"
+      }
+    ]
+  }
+}
