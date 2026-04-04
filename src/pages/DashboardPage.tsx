@@ -26,7 +26,7 @@ const panelComponents: Record<PanelId, React.LazyExoticComponent<React.Component
   'command-center': CommandCenter,
 }
 
-// ── Feature flag ──────────────────────────────────────────────────
+// -- Feature flag --
 const REQUIRE_AUTH = import.meta.env.VITE_REQUIRE_AUTH === 'true'
 
 function DashboardInner() {
@@ -43,8 +43,11 @@ function DashboardInner() {
       <SwarmProvider>
         <IntegrationProvider>
           <div className="flex h-screen w-screen bg-forge-bg overflow-hidden">
+            {/* Sidebar handles its own responsive behavior internally */}
             <Sidebar activePanel={activePanel} onPanelChange={setActivePanel} />
-            <main className="flex-1 overflow-hidden">
+
+            {/* Main content: full-width on mobile, flex-1 on desktop */}
+            <main className="flex-1 min-w-0 overflow-hidden w-full md:w-auto">
               <Suspense fallback={<LoadingFallback />}>
                 <ActiveComponent />
               </Suspense>

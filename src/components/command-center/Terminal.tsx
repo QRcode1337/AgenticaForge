@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import type { TerminalLine, Suggestion } from './types.ts'
 import { getSuggestions } from './parse-command.ts'
 
+const STORAGE_KEY = 'agentforge-cmd-history'
+const MAX_HISTORY = 50
+
 const TXT = {
   fg:     '#ebdbb2',
   fg2:    '#d5c4a1',
@@ -26,7 +29,28 @@ const KIND_COLORS: Record<TerminalLine['kind'], string> = {
   data:    TXT.fg2,
 }
 
-// ── Collapsible JSON Block ──────────────────────────────────
+// -- Persistent History Helpers --
+
+function loadHistory(): string[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.slice(0, MAX_HISTORY) : []
+  } catch {
+    return []
+  }
+}
+
+function saveHistory(entries: string[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, MAX_HISTORY)))
+  } catch {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, 25)))
+  }
+}
+
+// -- Collapsible JSON Block --
 
 function CollapsibleJson({ data }: { data: Record<string, unknown> }) {
   const [open, setOpen] = useState(false)
@@ -52,7 +76,7 @@ function CollapsibleJson({ data }: { data: Record<string, unknown> }) {
   )
 }
 
-// ── Single Terminal Line ────────────────────────────────────
+// -- Single Terminal Line --
 
 function TerminalLineRow({
   ln,
@@ -63,14 +87,12 @@ function TerminalLineRow({
 }) {
   const color = KIND_COLORS[ln.kind]
 
-  // Render clickable run_ids in text
   const renderText = (text: string) => {
     const runIdRegex = /(run_\d+_\d+)/g
     const parts = text.split(runIdRegex)
 
     return parts.map((part, i) => {
       if (runIdRegex.test(part)) {
-        // Reset lastIndex since test advances it
         runIdRegex.lastIndex = 0
         return (
           <button
@@ -100,7 +122,7 @@ function TerminalLineRow({
   )
 }
 
-// ── Autocomplete Dropdown ───────────────────────────────────
+// -- Autocomplete Dropdown --
 
 function AutocompleteDropdown({
   suggestions,
@@ -150,7 +172,92 @@ function AutocompleteDropdown({
   )
 }
 
-// ── Terminal Component ──────────────────────────────────────
+// -- History Search Overlay --
+
+function HistorySearchOverlay({
+  history,
+  searchTerm,
+  onSearchChange,
+  onSelect,
+  onClose,
+}: {
+  history: string[]
+  searchTerm: string
+  onSearchChange: (v: string) => void
+  onSelect: (cmd: string) => void
+  onClose: () => void
+}) {
+  const searchRef = useRef<HTMLInputElement>(null)
+  const filtered = searchTerm
+    ? history.filter((cmd) => cmd.toLowerCase().includes(searchTerm.toLowerCase()))
+    : history
+
+  useEffect(() => {
+    searchRef.current?.focus()
+  }, [])
+
+  return (
+    <div
+      className="absolute inset-0 z-20 flex flex-col"
+      style={{ backgroundColor: 'rgba(8, 10, 15, 0.95)' }}
+    >
+      <div
+        className="flex items-center gap-2 px-4 py-2 flex-shrink-0"
+        style={{ borderBottom: '1px solid rgba(60, 56, 54, 0.4)' }}
+      >
+        <span className="font-mono text-xs" style={{ color: TXT.yellow }}>SEARCH:</span>
+        <input
+          ref={searchRef}
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') onClose()
+            if (e.key === 'Enter' && filtered.length > 0) {
+              onSelect(filtered[0])
+              onClose()
+            }
+          }}
+          className="flex-1 bg-transparent font-mono text-[13px] outline-none caret-forge-cta"
+          style={{ color: TXT.fg }}
+          placeholder="Filter command history..."
+          spellCheck={false}
+        />
+        <span className="font-mono text-[10px]" style={{ color: TXT.dim }}>
+          {filtered.length}/{history.length}
+        </span>
+        <button
+          onClick={onClose}
+          className="font-mono text-xs px-2 py-0.5 transition-colors"
+          style={{ color: TXT.gray }}
+        >
+          ESC
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-2">
+        {filtered.length === 0 ? (
+          <p className="font-mono text-xs mt-4 text-center" style={{ color: TXT.dim }}>
+            No matching commands
+          </p>
+        ) : (
+          filtered.map((cmd, i) => (
+            <button
+              key={`${cmd}-${i}`}
+              onClick={() => { onSelect(cmd); onClose() }}
+              className="block w-full text-left font-mono text-[13px] py-1 px-2 transition-colors hover:bg-white/5"
+              style={{ color: TXT.fg2 }}
+            >
+              <span style={{ color: TXT.dim }} className="mr-2 text-[10px]">{i + 1}.</span>
+              {cmd}
+            </button>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+
+// -- Terminal Component --
 
 interface TerminalProps {
   lines: TerminalLine[]
@@ -161,14 +268,22 @@ interface TerminalProps {
 
 export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: TerminalProps) {
   const [input, setInput] = useState('')
-  const [history, setHistory] = useState<string[]>([])
+  const [history, setHistory] = useState<string[]>(loadHistory)
   const [historyIdx, setHistoryIdx] = useState(-1)
+  const [draftInput, setDraftInput] = useState('')
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [selectedSuggestion, setSelectedSuggestion] = useState(0)
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [showHistorySearch, setShowHistorySearch] = useState(false)
+  const [historySearchTerm, setHistorySearchTerm] = useState('')
 
   const inputRef = useRef<HTMLInputElement>(null)
   const outputRef = useRef<HTMLDivElement>(null)
+
+  // Persist history to localStorage on change
+  useEffect(() => {
+    saveHistory(history)
+  }, [history])
 
   // Auto-scroll on new output
   useEffect(() => {
@@ -195,8 +310,6 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
   }, [])
 
   const acceptSuggestion = useCallback((text: string) => {
-    // If it's a domain suggestion (ends with :), keep it editable
-    // If it's a verb suggestion, add space
     const newInput = text.endsWith(':') ? text : text + ' '
     setInput(newInput)
     setShowSuggestions(false)
@@ -217,12 +330,24 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
     }
 
     onSubmit(cmd)
-    setHistory((prev) => [cmd, ...prev].slice(0, 50))
+    setHistory((prev) => {
+      if (prev.length > 0 && prev[0] === cmd) return prev
+      return [cmd, ...prev].slice(0, MAX_HISTORY)
+    })
     setInput('')
     setHistoryIdx(-1)
+    setDraftInput('')
   }, [input, onSubmit, onClear])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Cmd+F / Ctrl+F: toggle history search
+    if (e.key === 'f' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault()
+      setShowHistorySearch((prev) => !prev)
+      setHistorySearchTerm('')
+      return
+    }
+
     // Tab: accept suggestion
     if (e.key === 'Tab' && showSuggestions && suggestions.length > 0) {
       e.preventDefault()
@@ -230,8 +355,12 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
       return
     }
 
-    // Escape: dismiss suggestions
+    // Escape: dismiss suggestions or history search
     if (e.key === 'Escape') {
+      if (showHistorySearch) {
+        setShowHistorySearch(false)
+        return
+      }
       setShowSuggestions(false)
       return
     }
@@ -254,6 +383,9 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
     if (!showSuggestions) {
       if (e.key === 'ArrowUp') {
         e.preventDefault()
+        if (historyIdx === -1) {
+          setDraftInput(input)
+        }
         const nextIdx = Math.min(historyIdx + 1, history.length - 1)
         setHistoryIdx(nextIdx)
         if (history[nextIdx] !== undefined) setInput(history[nextIdx])
@@ -262,14 +394,24 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
         e.preventDefault()
         const nextIdx = Math.max(historyIdx - 1, -1)
         setHistoryIdx(nextIdx)
-        setInput(nextIdx >= 0 ? history[nextIdx] : '')
+        if (nextIdx >= 0) {
+          setInput(history[nextIdx])
+        } else {
+          setInput(draftInput)
+        }
       }
     }
-  }, [showSuggestions, suggestions, selectedSuggestion, history, historyIdx, acceptSuggestion])
+  }, [showSuggestions, suggestions, selectedSuggestion, history, historyIdx, acceptSuggestion, input, draftInput, showHistorySearch])
+
+  const handleHistorySelect = useCallback((cmd: string) => {
+    setInput(cmd)
+    setShowHistorySearch(false)
+    inputRef.current?.focus()
+  }, [])
 
   return (
     <div
-      className="flex flex-1 flex-col overflow-hidden"
+      className="relative flex flex-1 flex-col overflow-hidden"
       style={{ borderRight: '1px solid rgba(60, 56, 54, 0.4)' }}
       onClick={focusInput}
     >
@@ -285,6 +427,14 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
           v2.0.0
         </span>
         <div className="flex-1" />
+        <button
+          onClick={(e) => { e.stopPropagation(); setShowHistorySearch(true); setHistorySearchTerm('') }}
+          className="font-mono text-[10px] transition-colors hover:opacity-80"
+          style={{ color: TXT.dim }}
+          title="Search history (Cmd+F)"
+        >
+          [{history.length} cmds]
+        </button>
         <span className="flex items-center gap-1.5 font-mono text-[10px]" style={{ color: TXT.green }}>
           <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: TXT.green }} />
           ENGINE ONLINE
@@ -298,13 +448,23 @@ export default function Terminal({ lines, onSubmit, onClear, onRunIdClick }: Ter
         ))}
       </div>
 
+      {/* History search overlay */}
+      {showHistorySearch && (
+        <HistorySearchOverlay
+          history={history}
+          searchTerm={historySearchTerm}
+          onSearchChange={setHistorySearchTerm}
+          onSelect={handleHistorySelect}
+          onClose={() => setShowHistorySearch(false)}
+        />
+      )}
+
       {/* Command input */}
       <form
         onSubmit={handleSubmit}
         className="relative flex-shrink-0 px-4 py-2"
         style={{ borderTop: '1px solid rgba(60, 56, 54, 0.3)' }}
       >
-        {/* Autocomplete dropdown */}
         {showSuggestions && (
           <AutocompleteDropdown
             suggestions={suggestions}

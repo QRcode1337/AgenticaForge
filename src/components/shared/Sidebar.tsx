@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { PanelId } from '../../types'
 
 interface SidebarProps {
   activePanel: PanelId
   onPanelChange: (panel: PanelId) => void
+  isMobileOverride?: boolean
+  isCollapsedOverride?: boolean
+  onToggle?: () => void
 }
 
 interface NavItem {
@@ -12,6 +15,9 @@ interface NavItem {
   label: string
   icon: React.ReactNode
 }
+
+const MOBILE_BREAKPOINT = 768
+const SWIPE_THRESHOLD = 50
 
 const navItems: NavItem[] = [
   {
@@ -110,9 +116,178 @@ const sidebarVariants = {
   expanded: { width: 240 },
 }
 
-export default function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
+export default function Sidebar({
+  activePanel,
+  onPanelChange,
+  isMobileOverride,
+  isCollapsedOverride,
+  onToggle,
+}: SidebarProps) {
   const [expanded, setExpanded] = useState(false)
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false,
+  )
+  const [mobileOpen, setMobileOpen] = useState(false)
 
+  // Touch swipe tracking
+  const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+
+  // Use overrides if provided (from parent DashboardPage)
+  const effectiveMobile = isMobileOverride ?? isMobile
+  const effectiveCollapsed = isCollapsedOverride ?? !mobileOpen
+
+  // Responsive breakpoint listener
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(e.matches)
+      if (e.matches) setMobileOpen(false)
+    }
+    handler(mql)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
+  // Swipe gestures on mobile
+  useEffect(() => {
+    if (!effectiveMobile) return
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX
+      touchStartY.current = e.touches[0].clientY
+    }
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return
+      const dx = e.changedTouches[0].clientX - touchStartX.current
+      const dy = e.changedTouches[0].clientY - touchStartY.current
+
+      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx > 0 && touchStartX.current < 30) {
+          // Swipe right from left edge -> open
+          if (onToggle) onToggle()
+          else setMobileOpen(true)
+        } else if (dx < 0) {
+          // Swipe left -> close
+          if (onToggle) onToggle()
+          else setMobileOpen(false)
+        }
+      }
+      touchStartX.current = null
+      touchStartY.current = null
+    }
+
+    document.addEventListener('touchstart', onTouchStart, { passive: true })
+    document.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart)
+      document.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [effectiveMobile, onToggle])
+
+  const handlePanelChange = useCallback((panel: PanelId) => {
+    onPanelChange(panel)
+    // Auto-close sidebar on mobile after selection
+    if (effectiveMobile) {
+      if (onToggle) onToggle()
+      else setMobileOpen(false)
+    }
+  }, [onPanelChange, effectiveMobile, onToggle])
+
+  const toggleMobile = useCallback(() => {
+    if (onToggle) onToggle()
+    else setMobileOpen((prev) => !prev)
+  }, [onToggle])
+
+  // Mobile layout
+  if (effectiveMobile) {
+    return (
+      <>
+        {/* Mobile toggle button */}
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-forge-bg border border-forge-border text-forge-dim hover:text-forge-text transition-colors touch-manipulation"
+          onClick={toggleMobile}
+          aria-label="Toggle sidebar"
+        >
+          {effectiveCollapsed ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          )}
+        </button>
+
+        {/* Backdrop */}
+        {!effectiveCollapsed && (
+          <div
+            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm transition-opacity duration-200"
+            onClick={toggleMobile}
+          />
+        )}
+
+        {/* Sliding sidebar */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-40 w-64 bg-forge-bg border-r border-forge-border
+            transform transition-transform duration-200 ease-in-out font-mono select-none
+            ${effectiveCollapsed ? '-translate-x-full' : 'translate-x-0'}`}
+        >
+          {/* Logo */}
+          <button
+            className="flex items-center h-16 px-4 border-b border-forge-border shrink-0 w-full cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); location.hash = '#/' }}
+          >
+            <div className="flex flex-col items-start">
+              <span className="text-forge-text font-mono font-bold text-xl leading-none">AF</span>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-forge-dim whitespace-nowrap leading-tight mt-0.5">
+                AGENTFORGE
+              </span>
+            </div>
+          </button>
+
+          {/* Navigation */}
+          <nav className="flex-1 flex flex-col gap-0.5 py-3 px-2 overflow-y-auto">
+            {navItems.map((item) => {
+              const isActive = activePanel === item.id
+              return (
+                <button
+                  key={item.id}
+                  onClick={(e) => { e.stopPropagation(); handlePanelChange(item.id) }}
+                  className={`
+                    relative flex items-center gap-3 h-12 rounded-none px-3
+                    transition-colors duration-150 cursor-pointer touch-manipulation
+                    ${isActive
+                      ? 'border-l-2 border-forge-cta text-forge-text'
+                      : 'border-l-2 border-transparent text-forge-dim hover:text-forge-text'
+                    }
+                  `}
+                >
+                  {isActive && (
+                    <span className="text-forge-cta text-xs font-bold shrink-0 -ml-1 mr-0">&gt;</span>
+                  )}
+                  <span className="shrink-0">{item.icon}</span>
+                  <span className="text-xs font-mono uppercase tracking-wider whitespace-nowrap">
+                    {item.label}
+                  </span>
+                </button>
+              )
+            })}
+          </nav>
+
+          {/* Status */}
+          <div className="flex items-center gap-2 h-12 px-4 border-t border-forge-border shrink-0">
+            <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
+            <span className="text-[10px] text-forge-dim font-mono uppercase tracking-wider">SYSTEM ONLINE</span>
+          </div>
+        </aside>
+      </>
+    )
+  }
+
+  // Desktop layout (original hover-expand behavior)
   return (
     <motion.aside
       className="flex flex-col h-screen bg-forge-bg border-r border-forge-border select-none font-mono"
@@ -123,18 +298,13 @@ export default function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
       onMouseLeave={() => setExpanded(false)}
       onClick={() => setExpanded((prev) => !prev)}
     >
-      {/* Logo — click to return to homepage */}
+      {/* Logo */}
       <button
         className="flex items-center h-16 px-4 border-b border-forge-border shrink-0 w-full cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation()
-          location.hash = '#/'
-        }}
+        onClick={(e) => { e.stopPropagation(); location.hash = '#/' }}
       >
         <div className="flex flex-col items-start">
-          <span className="text-forge-text font-mono font-bold text-xl leading-none">
-            AF
-          </span>
+          <span className="text-forge-text font-mono font-bold text-xl leading-none">AF</span>
           <motion.span
             className="text-[9px] uppercase tracking-[0.2em] text-forge-dim whitespace-nowrap overflow-hidden leading-tight mt-0.5"
             animate={{ opacity: expanded ? 1 : 0, height: expanded ? 'auto' : 0 }}
@@ -152,10 +322,7 @@ export default function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
           return (
             <button
               key={item.id}
-              onClick={(e) => {
-                e.stopPropagation()
-                onPanelChange(item.id)
-              }}
+              onClick={(e) => { e.stopPropagation(); onPanelChange(item.id) }}
               className={`
                 relative flex items-center gap-3 h-10 rounded-none px-3
                 transition-colors duration-150 cursor-pointer
@@ -165,7 +332,6 @@ export default function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
                 }
               `}
             >
-              {/* Active chevron prefix */}
               {isActive && (
                 <motion.span
                   layoutId="sidebar-active"
@@ -175,15 +341,10 @@ export default function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
                   &gt;
                 </motion.span>
               )}
-
               <span className="shrink-0">{item.icon}</span>
-
               <motion.span
                 className="text-xs font-mono uppercase tracking-wider whitespace-nowrap overflow-hidden"
-                animate={{
-                  opacity: expanded ? 1 : 0,
-                  width: expanded ? 'auto' : 0,
-                }}
+                animate={{ opacity: expanded ? 1 : 0, width: expanded ? 'auto' : 0 }}
                 transition={{ duration: 0.2 }}
               >
                 {item.label}
@@ -193,7 +354,7 @@ export default function Sidebar({ activePanel, onPanelChange }: SidebarProps) {
         })}
       </nav>
 
-      {/* Status indicator */}
+      {/* Status */}
       <div className="flex items-center gap-2 h-12 px-4 border-t border-forge-border shrink-0 overflow-hidden">
         <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
         <motion.span
