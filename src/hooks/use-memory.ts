@@ -184,15 +184,6 @@ async function backendSearchMemories(
   }))
 }
 
-// ── Content hash (browser-side) ──────────────────────────────────
-async function hashContent(content: string): Promise<string> {
-  const data = new TextEncoder().encode(content)
-  const buf = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-}
-
 // ── Hook ─────────────────────────────────────────────────────────
 export function useMemory(): MemorySnapshot {
   const engine = useContext(MemoryContext)

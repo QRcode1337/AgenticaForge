@@ -15,7 +15,7 @@ import {
   type NodeProps,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useSwarm } from '../../hooks/use-swarm.ts'
 import { supabase } from '../../lib/supabase.ts'
 import AgentEditor from './AgentEditor.tsx'

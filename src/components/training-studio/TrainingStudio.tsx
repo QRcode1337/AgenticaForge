@@ -328,6 +328,10 @@ function TrainingControls({
   )
 }
 
+// ---------------------------------------------------------------------------
+// ChartTooltip
+// ---------------------------------------------------------------------------
+
 function ChartTooltip({
   active,
   payload,
@@ -342,13 +346,14 @@ function ChartTooltip({
   valueColor: string
 }) {
   if (!active || !payload?.length) return null
+  const value = payload[0]?.value
   return (
     <div className="bg-forge-surface border border-forge-border rounded-none px-3 py-2">
       <p className="font-mono text-[10px] uppercase tracking-wider text-forge-muted mb-1">
         EPOCH {label}
       </p>
       <p className="font-mono text-xs uppercase tracking-wider" style={{ color: valueColor }}>
-        {valueLabel}: {payload[0].value.toFixed(3)}
+        {valueLabel}: {typeof value === 'number' ? value.toFixed(3) : 'N/A'}
       </p>
     </div>
   )
@@ -493,7 +498,9 @@ export default function TrainingStudio() {
                   <Tooltip
                     content={(props) => (
                       <ChartTooltip
-                        {...props}
+                        active={props.active}
+                        payload={props.payload as readonly { value: number }[] | undefined}
+                        label={props.label}
                         valueLabel="EFFICIENCY"
                         valueColor="#22C55E"
                       />
@@ -536,7 +543,9 @@ export default function TrainingStudio() {
                   <Tooltip
                     content={(props) => (
                       <ChartTooltip
-                        {...props}
+                        active={props.active}
+                        payload={props.payload as readonly { value: number }[] | undefined}
+                        label={props.label}
                         valueLabel="LOSS"
                         valueColor="#EF4444"
                       />
