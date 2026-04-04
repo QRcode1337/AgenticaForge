@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import PanelHeader from '../shared/PanelHeader'
 import {
   LineChart,
   Line,
@@ -417,7 +418,9 @@ export default function TrainingStudio() {
   const handleResume = () => setTrainingStatus('running')
 
   return (
-    <div className="flex h-full w-full bg-forge-bg text-forge-text font-mono overflow-hidden">
+    <div className="flex h-full w-full flex-col bg-forge-bg text-forge-text font-mono overflow-hidden">
+      <PanelHeader panelNumber={3} title="Training Studio" stats={trainingStatus} />
+      <div className="flex flex-1 overflow-hidden">
       <aside className="w-[360px] shrink-0 border-r border-forge-border flex flex-col overflow-y-auto">
         <div className="flex items-center h-14 px-5 border-b border-forge-border shrink-0">
           <h2 className="font-mono font-semibold text-base uppercase tracking-wider text-forge-text">
@@ -555,6 +558,7 @@ export default function TrainingStudio() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

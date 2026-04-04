@@ -1,6 +1,8 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMemory, useBackendTierBreakdown } from '../../hooks/use-memory.ts'
+import PanelHeader from '../shared/PanelHeader'
+import EmptyState from '../shared/EmptyState'
 
 // -- Feature flag --
 const USE_BACKEND = true
@@ -489,8 +491,21 @@ export default function MemoryInspector() {
     )
   }, [])
 
+  const totalMemories = tierBreakdown.hot.length + tierBreakdown.warm.length + tierBreakdown.cold.length
+
   return (
     <div className="flex flex-col h-full bg-[#080a0f] text-[#e2e4e9] font-mono">
+      <PanelHeader panelNumber={2} title="Memory Inspector" stats={`${totalMemories} memories`} />
+      {totalMemories === 0 ? (
+        <EmptyState
+          icon="◈"
+          status="NO MEMORIES STORED"
+          copy="Nothing in memory yet. Store your first entry."
+          ctaLabel="+ STORE MEMORY"
+          onCta={() => {}}
+        />
+      ) : (
+        <>
       {/* Header */}
       <div className="flex flex-shrink-0 items-center justify-between px-6 pt-6 pb-4">
         <div>
@@ -605,6 +620,8 @@ export default function MemoryInspector() {
           </button>
         </div>
       </div>
+        </>
+      )}
     </div>
   )
 }

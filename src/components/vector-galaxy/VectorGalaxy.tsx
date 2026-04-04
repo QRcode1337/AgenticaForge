@@ -3,6 +3,8 @@ import { OrbitControls, Html, shaderMaterial } from '@react-three/drei'
 import * as THREE from 'three'
 import { useState, useRef, useMemo } from 'react'
 import { useMemory } from '../../hooks/use-memory.ts'
+import PanelHeader from '../shared/PanelHeader'
+import EmptyState from '../shared/EmptyState'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -482,34 +484,47 @@ export default function VectorGalaxy() {
   }, [vectorPoints])
 
   return (
-    <div className="relative h-full w-full bg-[#050310]">
-      <div className="absolute left-4 top-4 z-10 border border-forge-border bg-forge-bg/90 rounded-none p-3">
-        <h2 className="font-mono text-sm font-semibold uppercase tracking-wider text-forge-text">VECTOR GALAXY</h2>
-        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-forge-dim">REAL-TIME EMBEDDING SPACE</p>
-      </div>
+    <div className="flex h-full w-full flex-col">
+      <PanelHeader panelNumber={4} title="Vector Galaxy" stats={`${points.length} embeddings`} />
+      {vectorPoints.length === 0 ? (
+        <EmptyState
+          icon="✦"
+          status="NO EMBEDDINGS"
+          copy="The galaxy is empty. Store memories to populate it."
+          ctaLabel="GO TO MEMORY"
+          onCta={() => {}}
+        />
+      ) : (
+        <div className="relative flex-1 bg-[#050310]">
+          <div className="absolute left-4 top-4 z-10 border border-forge-border bg-forge-bg/90 rounded-none p-3">
+            <h2 className="font-mono text-sm font-semibold uppercase tracking-wider text-forge-text">VECTOR GALAXY</h2>
+            <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-forge-dim">REAL-TIME EMBEDDING SPACE</p>
+          </div>
 
-      <div className="absolute right-4 top-4 z-10 border border-forge-border bg-forge-bg/90 rounded-none p-3">
-        <ul className="space-y-1.5">
-          {Object.entries(CLUSTER_NAMES).map(([id, name]) => (
-            <li key={id} className="flex items-center gap-2">
-              <span className="inline-block h-2 w-2 rounded-none" style={{ backgroundColor: CLUSTER_COLORS[Number(id)] }} />
-              <span className="font-mono text-xs text-forge-text">{name}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+          <div className="absolute right-4 top-4 z-10 border border-forge-border bg-forge-bg/90 rounded-none p-3">
+            <ul className="space-y-1.5">
+              {Object.entries(CLUSTER_NAMES).map(([id, name]) => (
+                <li key={id} className="flex items-center gap-2">
+                  <span className="inline-block h-2 w-2 rounded-none" style={{ backgroundColor: CLUSTER_COLORS[Number(id)] }} />
+                  <span className="font-mono text-xs text-forge-text">{name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-      <div className="absolute bottom-4 left-4 z-10 border border-forge-border bg-forge-bg/90 rounded-none p-3">
-        <div className="flex items-center gap-4 font-mono text-xs text-forge-dim uppercase tracking-wider">
-          <span>Vectors: <span className="text-forge-text">{points.length}</span></span>
-          <span>|</span>
-          <span>HNSW Layers: <span className="text-forge-cta">{stats.hnswLayers}</span></span>
+          <div className="absolute bottom-4 left-4 z-10 border border-forge-border bg-forge-bg/90 rounded-none p-3">
+            <div className="flex items-center gap-4 font-mono text-xs text-forge-dim uppercase tracking-wider">
+              <span>Vectors: <span className="text-forge-text">{points.length}</span></span>
+              <span>|</span>
+              <span>HNSW Layers: <span className="text-forge-cta">{stats.hnswLayers}</span></span>
+            </div>
+          </div>
+
+          <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
+            <Scene points={points} />
+          </Canvas>
         </div>
-      </div>
-
-      <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
-        <Scene points={points} />
-      </Canvas>
+      )}
     </div>
   )
 }

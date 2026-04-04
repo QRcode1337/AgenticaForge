@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMemory } from '../../hooks/use-memory.ts'
 import { useSwarm } from '../../hooks/use-swarm.ts'
 import { supabase } from '../../lib/supabase.ts'
+import PanelHeader from '../shared/PanelHeader'
 import type { ActionType, ActionSource, TerminalLine, RunLogEntry } from './types.ts'
 import { ActionBus, msg } from './action-bus.ts'
 import { parseCommand } from './parse-command.ts'
@@ -460,7 +461,7 @@ export default function CommandCenter() {
         try {
           const { data: { session } } = await supabase.auth.getSession()
           if (!session?.user) {
-            banner.push(ln('error', '  Not authenticated - backend unavailable'))
+            banner.push(ln('info', `  Engine ready: ${stats.entryCount} entries | ${stats.hnswLayers} HNSW layers | ${stats.patternCount} patterns`))
           } else {
             const [memRes, agentRes, eventRes] = await Promise.all([
               supabase.from('memories').select('id', { count: 'exact', head: true }).eq('user_id', session.user.id),
@@ -638,7 +639,9 @@ export default function CommandCenter() {
   // ── Render ────────────────────────────────────────────
 
   return (
-    <div className="flex h-full w-full bg-forge-bg font-mono">
+    <div className="flex h-full w-full flex-col bg-forge-bg font-mono">
+      <PanelHeader panelNumber={7} title="Command Center" stats={`${lines.length} lines`} />
+      <div className="flex flex-1 overflow-hidden">
       {/* Left: Terminal */}
       <Terminal
         lines={lines}
@@ -687,6 +690,7 @@ export default function CommandCenter() {
         entry={drawerEntry}
         onClose={() => setDrawerRunId(null)}
       />
+      </div>
     </div>
   )
 }

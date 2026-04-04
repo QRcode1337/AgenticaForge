@@ -9,6 +9,8 @@ import ConfigModal from './ConfigModal.tsx'
 import AddIntegrationModal from './AddIntegrationModal.tsx'
 import EntryList from './EntryList.tsx'
 import BulkActions from './BulkActions.tsx'
+import PanelHeader from '../shared/PanelHeader'
+import EmptyState from '../shared/EmptyState'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -627,6 +629,17 @@ export default function IntegrationHub() {
 
   return (
     <div className="flex h-full w-full flex-col bg-[#080a0f] font-mono">
+      <PanelHeader panelNumber={6} title="Integration Hub" stats={`${liveIntegrations.filter(i => i.status === 'connected').length} connected`} />
+      {liveIntegrations.length === 0 ? (
+        <EmptyState
+          icon="◎"
+          status="NO INTEGRATIONS"
+          copy="No services connected. Add your first integration."
+          ctaLabel="+ ADD INTEGRATION"
+          onCta={() => setShowAddModal(true)}
+        />
+      ) : (
+        <>
       {/* ---- Header ---- */}
       <header className="flex flex-shrink-0 items-center gap-3 border-b border-[#252830] bg-[#0f1117] px-5 py-3">
         <div className="flex-1">
@@ -739,6 +752,8 @@ export default function IntegrationHub() {
           onAdd={handleAddIntegration}
           onClose={() => setShowAddModal(false)}
         />
+      )}
+        </>
       )}
     </div>
   )

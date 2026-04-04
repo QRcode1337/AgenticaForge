@@ -20,6 +20,8 @@ import { useSwarm } from '../../hooks/use-swarm.ts'
 import { supabase } from '../../lib/supabase.ts'
 import AgentEditor from './AgentEditor.tsx'
 import AgentCatalog from './AgentCatalog.tsx'
+import PanelHeader from '../shared/PanelHeader'
+import EmptyState from '../shared/EmptyState'
 
 // ── Feature flag ──────────────────────────────────────────────────
 const USE_BACKEND = Boolean(
@@ -611,6 +613,25 @@ export default function SquadBuilder() {
 
   return (
     <div className="flex h-full w-full flex-col bg-forge-bg font-mono">
+      <PanelHeader panelNumber={1} title="Squad Builder" stats={`${nodes.length} agents · ${edges.length} links`} />
+      {nodes.length === 0 ? (
+        <EmptyState
+          icon="⬡"
+          status="NO AGENTS DEPLOYED"
+          copy="Your squad is empty. Build your first team."
+          ctaLabel="+ CREATE AGENT"
+          onCta={() => {
+            const id = `agent-${Date.now()}`
+            setNodes((nds) => [...nds, {
+              id,
+              type: 'agent',
+              position: { x: 250, y: 150 },
+              data: { label: 'New Agent', role: 'worker' as const, status: 'idle' as const, memorySlots: 0, maxMemorySlots: 4 },
+            }])
+          }}
+        />
+      ) : (
+        <>
       {/* ---- Header bar ---- */}
       <header className="flex flex-shrink-0 items-center gap-3 border-b border-forge-border bg-forge-surface px-4 py-2.5">
         {/* Title */}
@@ -821,6 +842,8 @@ export default function SquadBuilder() {
           </motion.div>
         )}
       </AnimatePresence>
+        </>
+      )}
     </div>
   )
 }

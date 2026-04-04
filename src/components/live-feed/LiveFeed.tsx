@@ -4,6 +4,8 @@ import type { FeedEvent } from '../../types'
 import { useMemory } from '../../hooks/use-memory.ts'
 import { supabase } from '../../lib/supabase.ts'
 import type { EngineEventType } from '../../engine/types.ts'
+import PanelHeader from '../shared/PanelHeader'
+import EmptyState from '../shared/EmptyState'
 
 // ── Feature flag ────────────────────────────────────────────────────
 const USE_BACKEND = Boolean(
@@ -704,6 +706,17 @@ export default function LiveFeed() {
 
   return (
     <div className="flex h-full w-full flex-col bg-forge-bg font-mono">
+      <PanelHeader panelNumber={5} title="Live Feed" stats={`${mappedEvents.length + localEvents.length} events`} />
+      {mappedEvents.length + localEvents.length === 0 ? (
+        <EmptyState
+          icon="▣"
+          status="NO EVENTS"
+          copy="Waiting for agent activity. Deploy a squad to begin."
+          ctaLabel="GO TO SQUAD"
+          onCta={() => {}}
+        />
+      ) : (
+        <>
       {/* ════════ Top system bar ════════ */}
       <header
         className="flex flex-shrink-0 items-center gap-4 px-4 py-2"
@@ -929,6 +942,8 @@ export default function LiveFeed() {
           </span>
         </div>
       </footer>
+        </>
+      )}
     </div>
   )
 }
