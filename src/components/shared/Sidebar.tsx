@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { PanelId } from '../../types'
 import TourTrigger from '../walkthrough/TourTrigger'
+import SettingsTrigger from './SettingsTrigger'
 import CoachMark, { CoachMarkStyles } from '../walkthrough/CoachMark'
 
 interface SidebarProps {
@@ -12,6 +13,7 @@ interface SidebarProps {
   onToggle?: () => void
   tourActive?: boolean
   onTourRestart?: () => void
+  onSettingsOpen?: () => void
 }
 
 interface NavItem {
@@ -128,6 +130,7 @@ export default function Sidebar({
   onToggle,
   tourActive = false,
   onTourRestart = () => {},
+  onSettingsOpen = () => {},
 }: SidebarProps) {
   const [expanded, setExpanded] = useState(false)
   const [isMobile, setIsMobile] = useState(
@@ -289,7 +292,10 @@ export default function Sidebar({
 
           {/* Status */}
           <div className="flex items-center justify-between h-12 px-4 border-t border-forge-border shrink-0">
-            <TourTrigger onRestart={onTourRestart} expanded={true} />
+            <div className="flex items-center">
+              <TourTrigger onRestart={onTourRestart} expanded={true} />
+              <SettingsTrigger onOpen={onSettingsOpen} expanded={true} />
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
               <span className="text-[10px] text-forge-dim font-mono uppercase tracking-wider">SYSTEM ONLINE</span>
@@ -375,6 +381,7 @@ export default function Sidebar({
       {/* Status */}
       <div className="flex items-center gap-2 h-12 px-4 border-t border-forge-border shrink-0 overflow-hidden">
         <TourTrigger onRestart={onTourRestart} expanded={expanded} />
+        <SettingsTrigger onOpen={onSettingsOpen} expanded={expanded} />
         <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
         <motion.span
           className="text-[10px] text-forge-dim font-mono uppercase tracking-wider whitespace-nowrap overflow-hidden"
