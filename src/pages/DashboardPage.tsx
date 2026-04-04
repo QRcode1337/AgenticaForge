@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react'
+import React, { useState, Suspense, useEffect } from 'react'
 import Sidebar from '../components/shared/Sidebar'
 import { MemoryProvider } from '../hooks/use-memory'
 import { IntegrationProvider } from '../hooks/use-integrations'
@@ -31,7 +31,14 @@ const REQUIRE_AUTH = import.meta.env.VITE_REQUIRE_AUTH === 'true'
 
 function DashboardInner() {
   const { user, loading } = useAuth()
-  const [activePanel, setActivePanel] = useState<PanelId>('squad-builder')
+  const [activePanel, setActivePanel] = useState<PanelId>(() => {
+    const saved = localStorage.getItem('agentforge-active-panel')
+    return (saved as PanelId) || 'squad-builder'
+  })
+
+  useEffect(() => {
+    localStorage.setItem('agentforge-active-panel', activePanel)
+  }, [activePanel])
 
   if (REQUIRE_AUTH && loading) return <LoadingFallback />
   if (REQUIRE_AUTH && !user) return <LoginModal />
