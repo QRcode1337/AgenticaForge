@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { PanelId } from '../../types'
+import TourTrigger from '../walkthrough/TourTrigger'
+import CoachMark, { CoachMarkStyles } from '../walkthrough/CoachMark'
 
 interface SidebarProps {
   activePanel: PanelId
@@ -8,6 +10,8 @@ interface SidebarProps {
   isMobileOverride?: boolean
   isCollapsedOverride?: boolean
   onToggle?: () => void
+  tourActive?: boolean
+  onTourRestart?: () => void
 }
 
 interface NavItem {
@@ -122,6 +126,8 @@ export default function Sidebar({
   isMobileOverride,
   isCollapsedOverride,
   onToggle,
+  tourActive = false,
+  onTourRestart = () => {},
 }: SidebarProps) {
   const [expanded, setExpanded] = useState(false)
   const [isMobile, setIsMobile] = useState(
@@ -249,12 +255,13 @@ export default function Sidebar({
           </button>
 
           {/* Navigation */}
-          <nav className="flex-1 flex flex-col gap-0.5 py-3 px-2 overflow-y-auto">
+          <nav data-tour-step="sidebar-nav" className="flex-1 flex flex-col gap-0.5 py-3 px-2 overflow-y-auto">
             {navItems.map((item) => {
               const isActive = activePanel === item.id
               return (
                 <button
                   key={item.id}
+                  data-tour-step={item.id}
                   onClick={(e) => { e.stopPropagation(); handlePanelChange(item.id) }}
                   className={`
                     relative flex items-center gap-3 h-12 rounded-none px-3
@@ -268,7 +275,10 @@ export default function Sidebar({
                   {isActive && (
                     <span className="text-forge-cta text-xs font-bold shrink-0 -ml-1 mr-0">&gt;</span>
                   )}
-                  <span className="shrink-0">{item.icon}</span>
+                  <span className="shrink-0 relative">
+                    {item.icon}
+                    <CoachMark panelId={item.id} tourActive={tourActive} />
+                  </span>
                   <span className="text-xs font-mono uppercase tracking-wider whitespace-nowrap">
                     {item.label}
                   </span>
@@ -278,10 +288,14 @@ export default function Sidebar({
           </nav>
 
           {/* Status */}
-          <div className="flex items-center gap-2 h-12 px-4 border-t border-forge-border shrink-0">
-            <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
-            <span className="text-[10px] text-forge-dim font-mono uppercase tracking-wider">SYSTEM ONLINE</span>
+          <div className="flex items-center justify-between h-12 px-4 border-t border-forge-border shrink-0">
+            <TourTrigger onRestart={onTourRestart} expanded={true} />
+            <div className="flex items-center gap-2">
+              <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
+              <span className="text-[10px] text-forge-dim font-mono uppercase tracking-wider">SYSTEM ONLINE</span>
+            </div>
           </div>
+          <CoachMarkStyles />
         </aside>
       </>
     )
@@ -316,12 +330,13 @@ export default function Sidebar({
       </button>
 
       {/* Navigation */}
-      <nav className="flex-1 flex flex-col gap-0.5 py-3 px-2 overflow-hidden">
+      <nav data-tour-step="sidebar-nav" className="flex-1 flex flex-col gap-0.5 py-3 px-2 overflow-hidden">
         {navItems.map((item) => {
           const isActive = activePanel === item.id
           return (
             <button
               key={item.id}
+              data-tour-step={item.id}
               onClick={(e) => { e.stopPropagation(); onPanelChange(item.id) }}
               className={`
                 relative flex items-center gap-3 h-10 rounded-none px-3
@@ -341,7 +356,10 @@ export default function Sidebar({
                   &gt;
                 </motion.span>
               )}
-              <span className="shrink-0">{item.icon}</span>
+              <span className="shrink-0 relative">
+                {item.icon}
+                <CoachMark panelId={item.id} tourActive={tourActive} />
+              </span>
               <motion.span
                 className="text-xs font-mono uppercase tracking-wider whitespace-nowrap overflow-hidden"
                 animate={{ opacity: expanded ? 1 : 0, width: expanded ? 'auto' : 0 }}
@@ -356,6 +374,7 @@ export default function Sidebar({
 
       {/* Status */}
       <div className="flex items-center gap-2 h-12 px-4 border-t border-forge-border shrink-0 overflow-hidden">
+        <TourTrigger onRestart={onTourRestart} expanded={expanded} />
         <span className="text-forge-cta font-mono text-sm animate-pulse shrink-0">_</span>
         <motion.span
           className="text-[10px] text-forge-dim font-mono uppercase tracking-wider whitespace-nowrap overflow-hidden"
@@ -365,6 +384,7 @@ export default function Sidebar({
           SYSTEM ONLINE
         </motion.span>
       </div>
+      <CoachMarkStyles />
     </motion.aside>
   )
 }
