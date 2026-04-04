@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react'
+import React, { useState, useCallback, Suspense } from 'react'
 import Sidebar from '../components/shared/Sidebar'
 import { MemoryProvider } from '../hooks/use-memory'
 import { IntegrationProvider } from '../hooks/use-integrations'
@@ -6,6 +6,8 @@ import { SwarmProvider } from '../hooks/use-swarm'
 import { AuthProvider, useAuth } from '../hooks/use-auth'
 import LoginModal from '../components/auth/LoginModal'
 import LoadingFallback from '../components/shared/LoadingFallback'
+import { useTour, markPanelVisited } from '../hooks/use-tour'
+import WalkthroughTour from '../components/walkthrough/WalkthroughTour'
 import type { PanelId } from '../types'
 
 const SquadBuilder = React.lazy(() => import('../components/squad-builder/SquadBuilder'))
@@ -33,6 +35,16 @@ function DashboardInner() {
   const { user, loading } = useAuth()
   const [activePanel, setActivePanel] = useState<PanelId>('squad-builder')
 
+  const tour = useTour({
+    onNavigate: setActivePanel,
+  })
+
+  // Track visited panels for coach marks
+  const handlePanelChange = useCallback((panel: PanelId) => {
+    setActivePanel(panel)
+    markPanelVisited(panel)
+  }, [])
+
   if (REQUIRE_AUTH && loading) return <LoadingFallback />
   if (REQUIRE_AUTH && !user) return <LoginModal />
 
@@ -43,15 +55,26 @@ function DashboardInner() {
       <SwarmProvider>
         <IntegrationProvider>
           <div className="flex h-screen w-screen bg-forge-bg overflow-hidden">
-            {/* Sidebar handles its own responsive behavior internally */}
-            <Sidebar activePanel={activePanel} onPanelChange={setActivePanel} />
-
-            {/* Main content: full-width on mobile, flex-1 on desktop */}
+            <Sidebar
+              activePanel={activePanel}
+              onPanelChange={handlePanelChange}
+              tourActive={tour.active}
+              onTourRestart={tour.restart}
+            />
             <main className="flex-1 min-w-0 overflow-hidden w-full md:w-auto">
               <Suspense fallback={<LoadingFallback />}>
                 <ActiveComponent />
               </Suspense>
             </main>
+            <WalkthroughTour
+              active={tour.active}
+              stepIndex={tour.stepIndex}
+              currentStep={tour.currentStep}
+              totalSteps={tour.totalSteps}
+              onNext={tour.next}
+              onBack={tour.back}
+              onSkip={tour.skip}
+            />
           </div>
         </IntegrationProvider>
       </SwarmProvider>
