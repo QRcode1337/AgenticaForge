@@ -12,7 +12,7 @@
     "@supabase/supabase-js": "^2.49.0",
     "agentic-flow": "file:../agentica",
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.44.0",
+    "drizzle-orm": "^0.45.2",
     "openai": "^4.82.0",
     "postgres": "^3.4.5"
   },
