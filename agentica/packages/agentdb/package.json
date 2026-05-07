@@ -116,7 +116,7 @@
     "cli-table3": "^0.6.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.7",
-    "express-rate-limit": "^8.2.1",
+    "express-rate-limit": "^8.5.1",
     "helmet": "^8.1.0",
     "hnswlib-node": "^3.0.0",
     "inquirer": "^9.3.8",
